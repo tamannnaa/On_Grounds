@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Perfect Tutor - Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <style>
+        :root {
+            --primary-color: #331B3F;
+            --secondary-color: #ACC7B4;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            max-width: 100vw;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tutor-card {
+            position: relative;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s;
+            background: white;
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tutor-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            object-fit: cover;
+            margin-right: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tutor-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .tutor-info {
+            flex: 1;
+        }
+
+        .tutor-name {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating {
+            color: #666;
+            font-size: 1.1em;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating i {
+            color: #ffc107;
+            margin-right: 2px;
+        }
+
+        .rating span {
+            font-weight: 500;
+        }
+
+        .stats {
+            color: #666;
+            font-size: 0.9em;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats i {
+            color: var(--primary-color);
+            width: 16px;
+            text-align: center;
+        }
+
+        .stats .fa-users {
+            color: #2196f3;
+        }
+
+        .stats .fa-chalkboard-teacher {
+            color: #4caf50;
+        }
+
+        .stats .fa-map-marker-alt {
+            color: #f44336;
+        }
+
+        .stats .fa-graduation-cap {
+            color: #9c27b0;
+        }
+
+        .languages {
+            margin: 15px 0;
+        }
+
+        .language-tag {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            padding: 4px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+
+        .price-tag {
+            margin: 15px 0;
+            font-family: 'Arial', sans-serif;
+        }
+        .price-item {
+            margin-bottom: 8px;
+        }
+        .price-amount {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .price-duration {
+            color: #666;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .badge-super-tutor, .badge-professional {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .badge-super-tutor {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .badge-professional {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .match-percentage {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .about-text {
+            margin: 15px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .read-more-btn {
+            color: var(--primary-color);
+            text-decoration: underline;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ccc;
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            z-index: 1;
+        }
+
+        .wishlist-btn:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .wishlist-btn.active {
+            color: #dc3545;
+        }
+
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .profile-image-container {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-right: 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-image-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #999;
+            font-size: 2em;
+        }
+
+        .loan-status {
+            margin: 10px 0;
+        }
+        
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .status-tag i {
+            margin-right: 5px;
+        }
+        
+        .has-loan {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .no-loan {
+            background-color: #fbe9e7;
+            color: #d32f2f;
+        }
+        
+        .unknown-loan {
+            background-color: #f5f5f5;
+            color: #757575;
+        }
+
+        /* Add debug outline for development */
+        .debug {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar', { user: user }) %>
+
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h2>Search Results</h2>
+                <p class="text-muted">Found <%= tutors.length %> tutors matching your criteria</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="search-results">
+            <% if (tutors.length === 0) { %>
+                <div class="no-results">
+                    <h3>No tutors found matching your criteria</h3>
+                    <p>Try adjusting your search filters</p>
+                </div>
+            <% } else { %>
+                <div class="tutor-cards">
+                    <% tutors.forEach(tutor => { %>
+                        <% console.log('Processing tutor:', { 
+                            id: tutor._id,
+                            name: tutor.name,
+                            hasLoan: tutor.hasLoan,
+                            profilePhoto: tutor.profilePhoto 
+                        }) %>
+                        <div class="tutor-card">
+                            <div class="match-percentage">
+                                <%= tutor.matchPercentage %>% Match
+                            </div>
+                            <button class="wishlist-btn" onclick="toggleWishlist(this, '<%= tutor._id %>')" title="Add to Wishlist">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                            <div class="d-flex align-items-start">
+                                <div class="profile-image-container">
+                                    <% if (tutor.profilePhoto) { %>
+                                        <img src="<%= tutor.profilePhoto %>" 
+                                             alt="<%= tutor.name %>" 
+                                             onerror="handleImageError(this)"
+                                             onload="console.log('Image loaded successfully:', this.src)">
+                                    <% } else { %>
+                                        <div class="profile-image-fallback">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div class="tutor-info flex-grow-1">
+                                    <h3 class="tutor-name">
+                                        <%= tutor.name %>
+                                        <% if (tutor.applicationStatus === "APPROVED") { %>
+                                            <span class="badge-professional">Professional</span>
+                                        <% } %>
+                                    </h3>
+                                    
+                                    <div class="rating">
+                                        <% 
+                                        const rating = (4 + Math.random()).toFixed(1);
+                                        const reviewCount = Math.floor(Math.random() * 50) + 1;
+                                        const activeStudents = Math.floor(Math.random() * 30) + 1;
+                                        const totalLessons = Math.floor(Math.random() * 1000) + 100;
+                                        %>
+                                        <i class="fas fa-star"></i>
+                                        <span><%= rating %> (<%= reviewCount %> reviews)</span>
+                                    </div>
+
+                                    <div class="stats">
+                                        <span><i class="fas fa-map-marker-alt"></i><%= tutor.currentCity %>, <%= tutor.currentCountry %></span>
+                                        <span><i class="fas fa-graduation-cap"></i><%= tutor.collegeName %></span>
+                                        <span><i class="fas fa-users"></i><%= activeStudents %> active students</span>
+                                        <span><i class="fas fa-chalkboard-teacher"></i><%= totalLessons %> lessons</span>
+                                    </div>
+
+                                    <div class="languages">
+                                        <% if (tutor.languages && tutor.languages.length > 0) { %>
+                                            <% tutor.languages.slice(0, 3).forEach(lang => { %>
+                                                <span class="language-tag"><%= lang.language %> (<%= lang.proficiency %>)</span>
+                                            <% }) %>
+                                            <% if (tutor.languages.length > 3) { %>
+                                                <span class="language-tag">+<%= tutor.languages.length - 3 %> more</span>
+                                            <% } %>
+                                        <% } else { %>
+                                            <span class="language-tag">Languages not specified</span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="about-text">
+                                        <% const aboutText = tutor.about || 'No description available'; %>
+                                        <span class="short-text"><%= aboutText.length > 150 ? aboutText.substring(0, 150) + '...' : aboutText %></span>
+                                        <% if (aboutText.length > 150) { %>
+                                            <span class="full-text" style="display: none;"><%= aboutText %></span>
+                                            <button class="read-more-btn">Read More</button>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="price-tag">
+                                        <div class="price-item">
+                                            <span class="price-amount">₹<%= tutor.price60.toLocaleString('en-IN') %></span>
+                                            <span class="price-duration">per 60-min lesson</span>
+                                        </div>
+                                        <div class="price-item">
+                                            <span class="price-amount">₹<%= tutor.price30.toLocaleString('en-IN') %></span>
+                                            <span class="price-duration">per 30-min lesson</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="loan-status">
+                                        <% if (tutor.hasLoan !== undefined) { %>
+                                            <span class="status-tag <%= tutor.hasLoan ? 'has-loan' : 'no-loan' %>">
+                                                <i class="fas <%= tutor.hasLoan ? 'fa-check-circle' : 'fa-times-circle' %>"></i>
+                                                <%= tutor.hasLoan ? 'Has Student Loan' : 'No Student Loan' %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="status-tag unknown-loan">
+                                                <i class="fas fa-question-circle"></i>
+                                                Loan Status Unknown
+                                            </span>
+                                        <% } %>
+                                    </div>
+
+                                    <div class="action-buttons">
+                                        <a href="/<%= tutor._id %>" class="btn btn-outline-primary">View Full Profile</a>
+                                        <a href="/chat/<%= tutor._id %>" class="btn btn-outline-success">Send Message</a>
+                                        <a href="/<%= tutor._id %>" class="btn btn-outline-primary">Book Lesson</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/search-results.js">
+    </script>
+</body>
+</html> 

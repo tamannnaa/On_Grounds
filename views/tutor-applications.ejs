@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor Applications - OnGrounds</title>
+    <style>
+        :root {
+            --primary-color: #331B3F;
+            --secondary-color: #ACC7B4;
+            --hover-color: #4a2959;
+            --text-light: #ffffff;
+            --text-dark: #2c3e50;
+            --bg-light: #f5f5f5;
+            --border-color: rgba(172, 199, 180, 0.3);
+            --card-shadow: 0 4px 16px rgba(51, 27, 63, 0.1);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        .container {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .application-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(51, 27, 63, 0.05);
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .profile-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .info-value {
+            color: var(--text-dark);
+        }
+
+        /* Time slots styling */
+        .time-slots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .time-slot-group {
+            background: rgba(51, 27, 63, 0.05);
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .time-slot-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .time-slot-time {
+            font-weight: 500;
+        }
+
+        .time-slot-duration {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            background: rgba(51, 27, 63, 0.1);
+            border-radius: 4px;
+        }
+
+        .documents-section {
+            margin-top: 1rem;
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .document-item {
+            text-align: center;
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .document-label {
+            font-size: 0.875rem;
+            color: var(--primary-color);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #f0ad4e; 
+        }
+
+        .status-approved {
+            background-color: #5cb85c;
+        }
+
+        .status-rejected {
+            background-color: #d9534f;
+        }
+
+        .card-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            background-color: rgba(51, 27, 63, 0.02);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .modal h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(51, 27, 63, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .details-item {
+            background: rgba(51, 27, 63, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .details-item strong {
+            display: block;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .rejection-reason {
+            grid-column: 1 / -1;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .rejection-reason p {
+            margin: 0.5rem 0 0;
+            white-space: pre-wrap;
+        }
+
+        .image-preview-modal .modal-content {
+            max-width: 1000px;
+            text-align: center;
+        }
+
+        .image-preview-modal img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-state h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+        
+        <div class="page-header">
+            <h1 class="page-title">Tutor Applications</h1>
+        </div>
+
+        <% if (applications && applications.length > 0) { %>
+            <div class="applications-grid">
+                <% 
+                // Sort applications by createdAt in descending order (newest first)
+                applications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                applications.forEach(function(application) { 
+                %>
+                    <div class="application-card">
+                        <div class="card-header">
+                            <h3><%= application.name %></h3>
+                            <span class="status-badge status-<%= application.applicationStatus.toLowerCase() %>">
+                                <%= application.applicationStatus %>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-section">
+                                <% if (application.profilePhoto) { %>
+                                    <img src="<%= application.profilePhoto %>" alt="Profile Photo" class="profile-photo">
+                                <% } else { %>
+                                    <div class="profile-photo" style="background: #eee; display: flex; align-items: center; justify-content: center;">
+                                        No Photo
+                                    </div>
+                                <% } %>
+                                <div class="profile-info">
+                                    <div class="info-item">
+                                        <div class="info-label">Email</div>
+                                        <div class="info-value"><%= application.userId ? application.userId.email : 'N/A' %></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label">Status</div>
+                                        <div class="info-value"><%= application.status %></div>
+                                    </div>
+                                    <div class="info-item">
+                                        <div class="info-label"><%= application.status === 'student' ? 'College' : 'Working Field' %></div>
+                                        <div class="info-value"><%= application.status === 'student' ? application.collegeName : application.workingField %></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Country of Birth</div>
+                                    <div class="info-value"><%= application.countryOfBirth %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Current Country</div>
+                                    <div class="info-value"><%= application.currentCountry %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Current City</div>
+                                    <div class="info-value"><%= application.currentCity %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">About</div>
+                                    <div class="info-value"><%= application.about %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Available Days</div>
+                                    <div class="info-value"><%= application.days.join(', ') %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">30 Min Price</div>
+                                    <div class="info-value">$<%= application.price30 %></div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">60 Min Price</div>
+                                    <div class="info-value">$<%= application.price60 %></div>
+                                </div>
+                            </div>
+
+                            <div class="documents-section">
+                                <div class="info-label">Documents</div>
+                                <div class="documents-grid">
+                                    <% if (application.documents.idProof) { %>
+                                        <div class="document-item">
+                                            <img src="<%= application.documents.idProof %>" alt="ID Proof" class="document-preview" onclick="showImagePreview(this.src, 'ID Proof')">
+                                            <div class="document-label">ID Proof</div>
+                                        </div>
+                                    <% } %>
+                                    <% if (application.documents.collegeId) { %>
+                                        <div class="document-item">
+                                            <img src="<%= application.documents.collegeId %>" alt="College ID" class="document-preview" onclick="showImagePreview(this.src, 'College ID')">
+                                            <div class="document-label">College ID</div>
+                                        </div>
+                                    <% } %>
+                                    <% if (application.documents.addressProof) { %>
+                                        <div class="document-item">
+                                            <img src="<%= application.documents.addressProof %>" alt="Address Proof" class="document-preview" onclick="showImagePreview(this.src, 'Address Proof')">
+                                            <div class="document-label">Address Proof</div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <% if (application.applicationStatus === 'PENDING') { %>
+                                <button class="btn btn-secondary" onclick="showReviewModal('<%= application._id %>')">Review Application</button>
+                            <% } else { %>
+                                <button class="btn btn-primary" onclick="showApplicationDetails('<%= application._id %>')">View Details</button>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <h3>No Applications Found</h3>
+                <p>There are currently no tutor applications to review.</p>
+            </div>
+        <% } %>
+
+        <div id="imagePreviewModal" class="modal image-preview-modal">
+            <div class="modal-content">
+                <h2 id="imagePreviewTitle"></h2>
+                <img id="imagePreviewImg" src="" alt="Document Preview">
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeImagePreview()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="reviewModal" class="modal">
+            <div class="modal-content">
+                <h2>Review Application</h2>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <select id="applicationStatus" class="form-control">
+                            <option value="APPROVED">Approve</option>
+                            <option value="REJECTED">Reject</option>
+                        </select>
+                    </div>
+                    <div id="rejectionReasonContainer" style="display: none;">
+                        <label>Rejection Reason:</label>
+                        <textarea id="rejectionReason" class="form-control" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeReviewModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="updateApplicationStatus()">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="applicationDetailsModal" class="modal">
+            <div class="modal-content">
+                <h2>Application Details</h2>
+                <div class="modal-body" id="applicationDetailsContent">
+                    <div class="details-grid">
+                        <div class="details-item">
+                            <strong>Status:</strong>
+                            <span id="detailsStatus"></span>
+                        </div>
+                        <div class="details-item">
+                            <strong>Reviewed On:</strong>
+                            <span id="detailsReviewedOn"></span>
+                        </div>
+                        <div class="details-item rejection-reason" style="display: none;">
+                            <strong>Rejection Reason:</strong>
+                            <p id="detailsRejectionReason"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeApplicationDetails()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/tutor-applications.js">
+    </script>
+</body>
+</html> 

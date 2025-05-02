@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - OnGrounds</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <style>
+        .wishlist-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tutor-card {
+            position: relative;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s;
+            background: white;
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .profile-image-container {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-right: 20px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #f5f5f5;
+        }
+
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-image-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #999;
+            font-size: 2em;
+        }
+
+        .tutor-info {
+            flex: 1;
+        }
+
+        .tutor-name {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating {
+            color: #666;
+            font-size: 1.1em;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating i {
+            color: #ffc107;
+            margin-right: 2px;
+        }
+
+        .stats {
+            color: #666;
+            font-size: 0.9em;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stats i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .stats .fa-users { color: #2196f3; }
+        .stats .fa-chalkboard-teacher { color: #4caf50; }
+        .stats .fa-map-marker-alt { color: #f44336; }
+        .stats .fa-graduation-cap { color: #9c27b0; }
+
+        .languages {
+            margin: 15px 0;
+        }
+
+        .language-tag {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            padding: 4px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            font-size: 0.9em;
+            color: var(--primary-color);
+        }
+
+        .price-tag {
+            margin: 15px 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .price-item {
+            margin-bottom: 8px;
+        }
+
+        .price-amount {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .price-duration {
+            color: #666;
+            margin-left: 5px;
+            font-size: 0.9em;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .badge-professional {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .match-percentage {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .about-text {
+            margin: 15px 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .read-more-btn {
+            color: var(--primary-color);
+            text-decoration: underline;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-wishlist i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .empty-wishlist h2 {
+            margin: 1rem 0;
+            color: var(--primary-color);
+        }
+
+        .empty-wishlist p {
+            color: #666;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .loan-status {
+            margin: 10px 0;
+        }
+        
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .status-tag i {
+            margin-right: 5px;
+        }
+        
+        .has-loan {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .no-loan {
+            background-color: #fbe9e7;
+            color: #d32f2f;
+        }
+        
+        .unknown-loan {
+            background-color: #f5f5f5;
+            color: #757575;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar', { user: user }) %>
+
+    <main class="wishlist-container">
+        <h1>My Wishlist</h1>
+        
+        <% if (wishlistItems && wishlistItems.length > 0) { %>
+            <% wishlistItems.forEach(tutor => { %>
+                <div class="tutor-card">
+                    <div class="match-percentage">
+                        <%= tutor.matchPercentage %>% Match
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="profile-image-container">
+                            <% if (tutor.profilePhoto) { %>
+                                <img src="<%= tutor.profilePhoto %>" 
+                                     alt="<%= tutor.name %>" 
+                                     onerror="handleImageError(this)">
+                            <% } else { %>
+                                <div class="profile-image-fallback">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="tutor-info flex-grow-1">
+                            <div class="tutor-name">
+                                <%= tutor.name || tutor.username %>
+                                <% if (tutor.applicationStatus === "APPROVED") { %>
+                                    <span class="badge-professional">Professional</span>
+                                <% } %>
+                            </div>
+                            
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <span><%= (tutor.rating || 4.0).toFixed(1) %> (<%= tutor.reviewCount || 0 %> reviews)</span>
+                            </div>
+
+                            <div class="stats">
+                                <span><i class="fas fa-map-marker-alt"></i><%= tutor.currentCity || 'City not specified' %><%= tutor.currentCountry ? ', ' + tutor.currentCountry : '' %></span>
+                                <span><i class="fas fa-graduation-cap"></i><%= tutor.collegeName || 'College not specified' %></span>
+                                <span><i class="fas fa-users"></i><%= tutor.activeStudents || 0 %> active students</span>
+                                <span><i class="fas fa-chalkboard-teacher"></i><%= tutor.totalLessons || 0 %> lessons</span>
+                            </div>
+
+                            <div class="languages">
+                                <% if (tutor.languages && tutor.languages.length > 0) { %>
+                                    <% tutor.languages.slice(0, 3).forEach(lang => { %>
+                                        <span class="language-tag"><%= lang.language %> (<%= lang.proficiency %>)</span>
+                                    <% }) %>
+                                    <% if (tutor.languages.length > 3) { %>
+                                        <span class="language-tag">+<%= tutor.languages.length - 3 %> more</span>
+                                    <% } %>
+                                <% } else { %>
+                                    <span class="language-tag">Languages not specified</span>
+                                <% } %>
+                            </div>
+
+                            <div class="about-text">
+                                <% const aboutText = tutor.about || 'No description available'; %>
+                                <span class="short-text"><%= aboutText.length > 150 ? aboutText.substring(0, 150) + '...' : aboutText %></span>
+                                <% if (aboutText.length > 150) { %>
+                                    <span class="full-text" style="display: none;"><%= aboutText %></span>
+                                    <button class="read-more-btn">Read More</button>
+                                <% } %>
+                            </div>
+
+                            <div class="price-tag">
+                                <div class="price-item">
+                                    <span class="price-amount">₹<%= tutor.price60 ? tutor.price60.toLocaleString('en-IN') : '0' %></span>
+                                    <span class="price-duration">per 60-min lesson</span>
+                                </div>
+                                <div class="price-item">
+                                    <span class="price-amount">₹<%= tutor.price30 ? tutor.price30.toLocaleString('en-IN') : '0' %></span>
+                                    <span class="price-duration">per 30-min lesson</span>
+                                </div>
+                            </div>
+
+                            <div class="loan-status">
+                                <% if (tutor.hasLoan !== undefined) { %>
+                                    <span class="status-tag <%= tutor.hasLoan ? 'has-loan' : 'no-loan' %>">
+                                        <i class="fas <%= tutor.hasLoan ? 'fa-check-circle' : 'fa-times-circle' %>"></i>
+                                        <%= tutor.hasLoan ? 'Has Student Loan' : 'No Student Loan' %>
+                                    </span>
+                                <% } else { %>
+                                    <span class="status-tag unknown-loan">
+                                        <i class="fas fa-question-circle"></i>
+                                        Loan Status Unknown
+                                    </span>
+                                <% } %>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="/tutor/<%= tutor._id %>" class="btn btn-outline-primary">View Full Profile</a>
+                                <a href="/chat/<%= tutor._id %>" class="btn btn-outline-success">Send Message</a>
+                                <button class="btn btn-primary">Book Lesson</button>
+                                <button class="btn btn-danger" onclick="removeFromWishlist('<%= tutor._id %>')">
+                                    Remove from Wishlist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <div class="empty-wishlist">
+                <i class="fas fa-heart"></i>
+                <h2>Your wishlist is empty</h2>
+                <p>Start adding tutors to your wishlist by clicking the heart icon on their profiles!</p>
+                <a href="/dashboard" class="btn primary-btn" style="display: inline-block; margin-top: 1rem; max-width: 200px;">
+                    Find Tutors
+                </a>
+            </div>
+        <% } %>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/wishlist.js">
+    </script>
+</body>
+</html> 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnGrounds - Find Your Perfect Tutor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #6e8efb, #4a6cf7);
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 50px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #4a6cf7;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 mx-auto text-center">
+                    <h1 class="display-4 mb-4">Find Your Perfect Tutor</h1>
+                    <p class="lead mb-4">Connect with experienced tutors worldwide for personalized learning experiences</p>
+                    
+                    <div class="search-box">
+                        <form id="searchForm" action="/search-tutors" method="GET">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" 
+                                           class="form-control form-control-lg" 
+                                           name="location" 
+                                           placeholder="Enter location (e.g., Berlin, Germany)"
+                                           required>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-lg" name="priceRange">
+                                        <option value="">Price Range (per hour)</option>
+                                        <option value="0-25">$0 - $25</option>
+                                        <option value="25-50">$25 - $50</option>
+                                        <option value="50-100">$50 - $100</option>
+                                        <option value="100+">$100+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">Search</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="minPrice" id="minPrice">
+                            <input type="hidden" name="maxPrice" id="maxPrice">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <h3>Expert Tutors</h3>
+                    <p>Connect with verified and experienced tutors from around the world</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Global Reach</h3>
+                    <p>Find tutors from different countries and cultural backgrounds</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Flexible Pricing</h3>
+                    <p>Choose from various price ranges that suit your budget</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/search.js"></script>
+</body>
+</html> 

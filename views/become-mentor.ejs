@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become a Mentor - OnGrounds</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/mentor-form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .application-status {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 600;
+            z-index: 1000;
+            display: none;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-pending {
+            background-color: rgba(51, 27, 63, 0.1);
+            color: #331B3F;
+            border: 1px solid #331B3F;
+        }
+
+        .status-approved {
+            background-color: rgba(172, 199, 180, 0.2);
+            color: #2d5a27;
+            border: 1px solid #2d5a27;
+        }
+
+        .status-rejected {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #c0392b;
+            border: 1px solid #c0392b;
+        }
+
+        .rejection-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-radius: 8px;
+            color: #c0392b;
+            display: none;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+        :root {
+            --primary-color: #331B3F;
+            --secondary-color: #ACC7B4;
+        }
+
+        .mentor-form button {
+            background-color: var(--primary-color);
+        }
+
+        .mentor-form button:hover {
+            background-color: #4a2959;
+        }
+
+        .status-toggle .status-btn.active {
+            background-color: var(--primary-color);
+        }
+
+        .document-upload-label {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .document-upload-label i {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .document-upload-label:hover {
+            background-color: #9bb5a3;
+            transform: translateY(-2px);
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            opacity: 0.8;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 150px;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .document-preview i {
+            font-size: 48px;
+            color: var(--secondary-color);
+        }
+
+        .document-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .document-upload-item {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--primary-color);
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        .upload-status {
+            margin-top: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .upload-status.success {
+            color: #2d5a27;
+        }
+
+        .upload-status.error {
+            color: #c0392b;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 14px;
+        }
+
+        select:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .location-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .location-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+        .language-entry {
+            margin-bottom: 10px;
+        }
+
+        .language-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .language-select,
+        .proficiency-select {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .remove-language {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-language {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .add-language:hover {
+            background-color: #4a2959;
+        }
+
+        .status-btn {
+            color: white;
+            background-color: #6c757d;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .status-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .loan-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .loan-toggle {
+            margin-bottom: 15px;
+        }
+
+        .loan-details {
+            display: none;
+        }
+
+        .loan-details.visible {
+            display: block;
+        }
+        .nav-bar {
+            background-color: var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #9bb5a3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="/" class="nav-brand">OnGrounds</a>
+        <div class="nav-links">
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div id="applicationStatus" class="application-status"></div>
+    <div id="rejectionMessage" class="rejection-message"></div>
+
+    <div class="mentor-form-container">
+        <h1 class="form-title">Become a Mentor</h1>
+        <p class="form-subtitle">Share your knowledge and inspire others</p>
+
+        <% if (locals.mentor && mentor.applicationStatus === 'REJECTED') { %>
+            <div class="rejection-message" style="display: block;">
+                <h3>Application Feedback</h3>
+                <p><%= mentor.rejectionReason %></p>
+                <p>Please review the feedback and make necessary changes before resubmitting your application.</p>
+            </div>
+        <% } %>
+
+        <form id="mentorForm" class="mentor-form" enctype="multipart/form-data">
+            <div class="form-section">
+                <div class="photo-upload-section">
+                    <div class="photo-preview">
+                        <img id="profilePhotoPreview" src="/images/default-avatar.png" alt="Profile Photo">
+                    </div>
+                    <div class="photo-upload-controls">
+                        <label for="profilePhoto" class="upload-btn">
+                            <i class="fas fa-camera"></i>
+                            Upload Photo
+                        </label>
+                        <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" hidden>
+                        <p class="photo-hint">Maximum size: 5MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+
+                <div class="form-group">
+                    <label for="about">About Me</label>
+                    <textarea id="about" name="about" required placeholder="Tell us about yourself, your expertise, and teaching style"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="countryOfBirth">Country of Birth</label>
+                    <select id="countryOfBirth" name="countryOfBirth" required>
+                        <option value="">Select your country of birth</option>
+                    </select>
+                </div>
+
+                <div class="form-group location-fields">
+                    <div class="field-group">
+                        <label for="currentCountry">Current Country</label>
+                        <select id="currentCountry" name="currentCountry" required>
+                            <option value="">Select your current country</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label for="currentCity">Current City</label>
+                        <select id="currentCity" name="currentCity" required>
+                            <option value="">Select your current city</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Status</label>
+                    <div class="status-toggle">
+                        <button type="button" class="status-btn active" data-status="student">Student</button>
+                        <button type="button" class="status-btn" data-status="professional">Professional</button>
+                    </div>
+                </div>
+
+                <div class="form-group" id="collegeSection">
+                    <label for="collegeName">College Name</label>
+                    <input type="text" id="collegeName" name="collegeName" placeholder="Enter your college name">
+                </div>
+
+                <div class="form-group hidden" id="workingSection">
+                    <label for="workingField">Working Field</label>
+                    <select id="workingField" name="workingField">
+                        <option value="">Select your field</option>
+                        <option value="technology">Technology</option>
+                        <option value="finance">Finance</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="design">Design</option>
+                        <option value="consulting">Consulting</option>
+                        <option value="research">Research</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group pricing-section">
+                    <label>Session Pricing</label>
+                    <div class="price-inputs">
+                        <div class="price-input-group">
+                            <label for="price30">30 mins</label>
+                            <div class="price-field">
+                                <span class="currency">₹</span>
+                                <input type="number" id="price30" name="price30" min="0" step="100" required>
+                            </div>
+                        </div>
+                        <div class="price-input-group">
+                            <label for="price60">60 mins</label>
+                            <div class="price-field">
+                                <span class="currency">₹</span>
+                                <input type="number" id="price60" name="price60" min="0" step="100" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group schedule-section">
+                    <label>Weekly Availability</label>
+                    <div class="schedule-grid">
+                        <div class="time-slots">
+                            <div class="time-slot">
+                                <input type="checkbox" id="morning" name="timeSlots" value="morning" data-start="06:00 AM" data-end="12:00 PM">
+                                <label for="morning">Morning (6 AM - 12 PM)</label>
+                            </div>
+                            <div class="time-slot">
+                                <input type="checkbox" id="afternoon" name="timeSlots" value="afternoon" data-start="12:00 PM" data-end="04:00 PM">
+                                <label for="afternoon">Afternoon (12 PM - 4 PM)</label>
+                            </div>
+                            <div class="time-slot">
+                                <input type="checkbox" id="evening" name="timeSlots" value="evening" data-start="04:00 PM" data-end="08:00 PM">
+                                <label for="evening">Evening (4 PM - 8 PM)</label>
+                            </div>
+                            <div class="time-slot">
+                                <input type="checkbox" id="night" name="timeSlots" value="night" data-start="08:00 PM" data-end="12:00 AM">
+                                <label for="night">Night (8 PM - 12 AM)</label>
+                            </div>
+                        </div>
+                        <div class="days">
+                            <div class="day">
+                                <input type="checkbox" id="monday" name="days" value="monday">
+                                <label for="monday">Monday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="tuesday" name="days" value="tuesday">
+                                <label for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="wednesday" name="days" value="wednesday">
+                                <label for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="thursday" name="days" value="thursday">
+                                <label for="thursday">Thursday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="friday" name="days" value="friday">
+                                <label for="friday">Friday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="saturday" name="days" value="saturday">
+                                <label for="saturday">Saturday</label>
+                            </div>
+                            <div class="day">
+                                <input type="checkbox" id="sunday" name="days" value="sunday">
+                                <label for="sunday">Sunday</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Languages</h3>
+                    <div id="languages-container">
+                        <div class="language-entry">
+                            <div class="language-controls">
+                                <select class="language-select" name="languages[0][language]" required>
+                                    <option value="">Select Language</option>
+                                    <option value="English">English</option>
+                                    <option value="Hindi">Hindi</option>
+                                    <option value="Punjabi">Punjabi</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="French">French</option>
+                                    <option value="German">German</option>
+                                    <option value="Chinese">Chinese</option>
+                                    <option value="Japanese">Japanese</option>
+                                </select>
+                                <select class="proficiency-select" name="languages[0][proficiency]" required>
+                                    <option value="">Select Proficiency</option>
+                                    <option value="Native">Native</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Beginner">Beginner</option>
+                                </select>
+                                <button type="button" class="remove-language" onclick="removeLanguage(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="add-language" onclick="addLanguage()">
+                        <i class="fas fa-plus"></i> Add Language
+                    </button>
+                </div>
+
+                <div class="form-section loan-section">
+                    <h3>Student Loan Information</h3>
+                    <div class="loan-toggle">
+                        <label>
+                            <input type="radio" name="hasLoan" value="true" onchange="toggleLoanDetails(true)"> Yes, I have a student loan
+                        </label>
+                        <label>
+                            <input type="radio" name="hasLoan" value="false" onchange="toggleLoanDetails(false)" checked> No, I don't have a student loan
+                        </label>
+                    </div>
+                    <div class="loan-details">
+                        <div class="form-group">
+                            <label for="loanAmount">Loan Amount (₹)</label>
+                            <input type="number" id="loanAmount" name="loanDetails[amount]" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="loanPurpose">Loan Purpose</label>
+                            <textarea id="loanPurpose" name="loanDetails[purpose]" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">Document Verification</h3>
+                <p class="section-description">Please upload clear images of the following documents for verification</p>
+                
+                <div class="document-upload-grid">
+                    <div class="document-upload-item">
+                        <div class="document-preview" id="idPreview">
+                            <i class="fas fa-id-card"></i>
+                            <img src="" alt="" style="display: none;">
+                        </div>
+                        <label for="idProof" class="document-upload-label">
+                            <i class="fas fa-upload"></i>
+                            Upload ID Proof
+                            <span class="upload-hint">(Aadhar/PAN/Passport)</span>
+                        </label>
+                        <input type="file" id="idProof" name="idProof" accept="image/*" class="required-file">
+                        <div class="file-name" id="idProofName"></div>
+                        <div class="upload-status" id="idProofStatus"></div>
+                    </div>
+
+                    <div class="document-upload-item">
+                        <div class="document-preview" id="collegeIdPreview">
+                            <i class="fas fa-graduation-cap"></i>
+                            <img src="" alt="" style="display: none;">
+                        </div>
+                        <label for="collegeId" class="document-upload-label">
+                            <i class="fas fa-upload"></i>
+                            Upload College ID
+                            <span class="upload-hint">(Current/Latest)</span>
+                        </label>
+                        <input type="file" id="collegeId" name="collegeId" accept="image/*" class="required-file">
+                        <div class="file-name" id="collegeIdName"></div>
+                        <div class="upload-status" id="collegeIdStatus"></div>
+                    </div>
+
+                    <div class="document-upload-item">
+                        <div class="document-preview" id="addressProofPreview">
+                            <i class="fas fa-home"></i>
+                            <img src="" alt="" style="display: none;">
+                        </div>
+                        <label for="addressProof" class="document-upload-label">
+                            <i class="fas fa-upload"></i>
+                            Upload Address Proof
+                            <span class="upload-hint">(Utility Bill/License)</span>
+                        </label>
+                        <input type="file" id="addressProof" name="addressProof" accept="image/*" class="required-file">
+                        <div class="file-name" id="addressProofName"></div>
+                        <div class="upload-status" id="addressProofStatus"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+        </form>
+    </div>
+
+    <script src="/js/mentor-countries.js"></script>
+    <script src="/js/become-mentor.js"></script>
+</body>
+</html> 

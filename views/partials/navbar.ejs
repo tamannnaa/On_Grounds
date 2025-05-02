@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - OnGrounds</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/">
+        <div class="nav-left">
+            <img src="/images/logo.svg" alt="OnGrounds" class="nav-logo">
+            <h1 class="nav-brand">OnGrounds</h1>
+        </div>
+    </a>
+        <div class="nav-center">
+            <% if (typeof user !== 'undefined' && user) { %>
+            <button class="mentor-btn" onclick="window.location.href='/become-mentor'">
+                <i class="fas fa-chalkboard-teacher"></i>
+                Become a Mentor
+            </button>
+            <% } %>
+        </div>
+        <div class="nav-right">
+            <button class="refer-btn">
+                <i class="fas fa-user-plus"></i>
+                Refer a Friend
+            </button>
+            <div class="dropdown">
+                <button class="dropdown-btn">
+                    <i class="fas fa-globe"></i>
+                    English
+                </button>
+                <div class="dropdown-content">
+                    <a href="#">English</a>
+                    <a href="#">Hindi</a>
+                    <a href="#">Spanish</a>
+                    <a href="#">French</a>
+                    <a href="#">German</a>
+                    <a href="#">Chinese</a>
+                    <a href="#">Japanese</a>
+                    <a href="#">Korean</a>
+                    <a href="#">Russian</a>
+                    <a href="#">Arabic</a>
+                    <a href="#">Portuguese</a>
+                    <a href="#">Italian</a>
+                    <a href="#">Dutch</a>
+                    <a href="#">Turkish</a>
+                    <a href="#">Vietnamese</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">
+                    <i class="fas fa-rupee-sign"></i>
+                    INR
+                </button>
+                <div class="dropdown-content">
+                    <a href="#"><i class="fas fa-rupee-sign"></i> INR - Indian Rupee</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> USD - US Dollar</a>
+                    <a href="#"><i class="fas fa-euro-sign"></i> EUR - Euro</a>
+                    <a href="#"><i class="fas fa-pound-sign"></i> GBP - British Pound</a>
+                    <a href="#"><i class="fas fa-yen-sign"></i> JPY - Japanese Yen</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> AUD - Australian Dollar</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> CAD - Canadian Dollar</a>
+                    <a href="#"><i class="fas fa-won-sign"></i> KRW - South Korean Won</a>
+                    <a href="#"><i class="fas fa-ruble-sign"></i> RUB - Russian Ruble</a>
+                    <a href="#"><i class="fas fa-shekel-sign"></i> ILS - Israeli Shekel</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> SGD - Singapore Dollar</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> NZD - New Zealand Dollar</a>
+                    <a href="#"><i class="fas fa-lira-sign"></i> TRY - Turkish Lira</a>
+                    <a href="#"><i class="fas fa-dollar-sign"></i> HKD - Hong Kong Dollar</a>
+                    <a href="#"><i class="fas fa-swiss-franc-sign"></i> CHF - Swiss Franc</a>
+                </div>
+            </div>
+            <div class="nav-icons">
+                <% if (typeof user !== 'undefined' && user) { %>
+                <button class="icon-btn" title="Messages" onclick="window.location.href='/chat/chatPage'">
+                    <i class="fas fa-envelope"></i>
+                </button>
+                <button class="icon-btn" title="Help">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <button class="icon-btn" title="Favorites" onclick="window.location.href='/wishlist'">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="icon-btn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <% } %>
+                <div class="profile-dropdown">
+                    <button class="profile-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <div class="profile-dropdown-content">
+                        <% if (typeof user !== 'undefined' && user) { %>
+                            <div class="profile-info">
+                                <p class="profile-name"><%= user.username %></p>
+                                <p class="profile-email"><%= user.email %></p>
+                            </div>
+                            <a href="/book/my-bookings">My Bookings</a>
+                            <a href="/settings">Settings</a>
+                            <a href="/logout">Logout</a>
+                        <% } else { %>
+                            <div class="profile-info">
+                                <a href="/login">Login</a>
+                                <a href="/signup">Sign Up</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</body>
+</html> 

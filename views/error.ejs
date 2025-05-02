@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - OnGrounds</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-lg w-full">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold text-red-600 mb-4">Error</h1>
+            <% if (typeof message !== 'undefined') { %>
+                <p class="text-gray-700 mb-4"><%= message %></p>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && process.env.NODE_ENV === 'development') { %>
+                <div class="mt-4 p-4 bg-gray-100 rounded text-left">
+                    <pre class="text-sm text-gray-600 overflow-auto"><%= error.stack %></pre>
+                </div>
+            <% } %>
+            
+            <div class="mt-6">
+                <a href="/" class="text-blue-600 hover:text-blue-800">Return to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
