@@ -2,6 +2,30 @@ const mongoose = require('mongoose');
 
 const validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
+// Review schema - embedded in the Mentor schema
+const reviewSchema = new mongoose.Schema({
+    student: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User',
+        required: [true, 'Student reference is required']
+    },
+    content: {
+        type: String,
+        required: [true, 'Review content is required'],
+        trim: true
+    },
+    rating: {
+        type: Number,
+        required: [true, 'Rating is required'],
+        min: [1, 'Rating must be at least 1'],
+        max: [5, 'Rating cannot exceed 5']
+    },
+    createdAt: { 
+        type: Date, 
+        default: Date.now 
+    }
+}, { timestamps: true });
+
 const mentorSchema = new mongoose.Schema({
     user: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -17,6 +41,15 @@ const mentorSchema = new mongoose.Schema({
     status: String,
     collegeName: String,
     workingField: String,
+    // Added ratings field to store average rating
+    ratings: {
+        type: Number,
+        default: 0,
+        min: [0, 'Rating cannot be negative'],
+        max: [5, 'Rating cannot exceed 5']
+    },
+    // Added reviews array using the reviewSchema
+    reviews: [reviewSchema],
     languages: {
         type: [{
             language: {
@@ -124,7 +157,10 @@ const mentorSchema = new mongoose.Schema({
     timestamps: true,
     strict: true
 });
+
+// Pre-save middleware
 mentorSchema.pre('save', function(next) {
+    // Validate languages array
     if (!Array.isArray(this.languages)) {
         this.languages = [];
     }
@@ -135,12 +171,35 @@ mentorSchema.pre('save', function(next) {
         lang.proficiency && 
         ['Native', 'Advanced', 'Intermediate', 'Beginner'].includes(lang.proficiency)
     );
+    
+    // Validate loan details
     if (this.hasLoan && (!this.loanDetails || !this.loanDetails.amount)) {
         this.hasLoan = false;
         this.loanDetails = undefined;
     }
 
+    // Calculate average rating if reviews exist
+    if (this.reviews && this.reviews.length > 0) {
+        const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
+        this.ratings = parseFloat((totalRating / this.reviews.length).toFixed(1));
+    } else {
+        this.ratings = 0;
+    }
+
     next();
 });
+
+// Method to add a review and update the average rating
+mentorSchema.methods.addReview = async function(reviewData) {
+    // Add new review to the reviews array
+    this.reviews.push(reviewData);
+    
+    // Calculate new average rating
+    const totalRating = this.reviews.reduce((sum, review) => sum + review.rating, 0);
+    this.ratings = parseFloat((totalRating / this.reviews.length).toFixed(1));
+    
+    // Save the document
+    return this.save();
+};
 
 module.exports = mongoose.model('Mentor', mentorSchema);

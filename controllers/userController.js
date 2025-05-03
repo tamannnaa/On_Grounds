@@ -78,28 +78,32 @@ const updateMentorAvailability = async (req, res) => {
 
 const getTutorProfile = async (req, res) => {
     try {
-        const tutor = await Mentor.findById(req.params.id).populate('user');
+        // Populate both the user field and the reviews field
+        const tutor = await Mentor.findById(req.params.id)
+            .populate('user')
+            .populate({
+                path: 'reviews.student', 
+                select: 'username '  // Populate the user who left the review (assuming reviews have userId field)
+            }).sort({ createdAt: -1 });;
+            
         if (!tutor) {
             return res.status(404).render('error', { message: 'Tutor not found' });
         }
-
+        
         const bookings = await Booking.find({ tutorId: tutor._id });
         const bookedSlots = bookings.map(booking => ({
             date: booking.date,
             timeSlot: booking.timeSlot
         }));
-        const dummyReviews = Array.from({ length: 10 }, (_, i) => ({
-            id: i + 1,
-            userName: `Student ${i + 1}`,
-            rating: Math.floor(Math.random() * 2) + 4, 
-            comment: `Great tutor! Really helped me understand the concepts. The teaching method is excellent and very patient with students. Would definitely recommend!`,
-            date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()
-        }));
 
+        // Use the reviews field from the tutor document
+        // Sort reviews by date if needed
+        const reviews = tutor.reviews ? tutor.reviews.sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+        
         res.render('tutor-profile', {
             tutor,
             bookedSlots,
-            reviews: dummyReviews
+            reviews
         });
     } catch (error) {
         console.error('Error fetching tutor profile:', error);
@@ -187,9 +191,12 @@ const searchTutors = async (req, res) => {
             };
         });
         tutors.sort((a, b) => b.matchPercentage - a.matchPercentage);
+        const mentor = await Mentor.findOne({ user: req.session.userId });
+        const isMentor = !!mentor; 
         res.render('search-results', {
             tutors,
             user,
+            isMentor,
             userId: req.session.userId
         });
 
@@ -382,7 +389,11 @@ const getDashboard = async (req, res) => {
             req.session.destroy();
             return res.redirect('/login');
         }
-        res.render('dashboard', { user, layout: false });
+        
+        const mentor = await Mentor.findOne({ user: req.session.userId });
+        const isMentor = !!mentor; 
+        
+        res.render('dashboard', { user, isMentor, layout: false });
     } catch (error) {
         console.error('Dashboard error:', error);
         res.redirect('/login');

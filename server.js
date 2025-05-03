@@ -7,7 +7,7 @@ const expressLayouts = require('express-ejs-layouts');
 const http = require('http');
 require('dotenv').config();
 const { initializeSocket } = require('./socket'); 
-
+const flash = require('connect-flash');
 const app = express();
 const server = http.createServer(app);
 const io = initializeSocket(server);
@@ -38,7 +38,7 @@ app.use(session({
         sameSite: 'strict'
     }
 }));
-
+app.use(flash());
 app.get('/favicon.ico', (req, res) => {
     res.status(204).end();
 });

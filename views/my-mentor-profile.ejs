@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .star-rating {
+            color: #FFD700;
+        }
+        .profile-section {
+            transition: all 0.3s ease;
+        }
+        .profile-section:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .profile-image-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #999;
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">My Mentor Profile</h1>
+            <% if (mentor) { %>
+            <a href="/mentor/edit-profile" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded flex items-center">
+                <i class="fas fa-edit mr-2"></i> Edit Profile
+            </a>
+            <%}%>
+        </div>
+
+        <% if (mentor) { %>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Profile Header -->
+                <div class="bg-blue-700 text-white p-6">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white mb-4 md:mb-0 md:mr-6">
+                            <% if (mentor.profilePhoto) { %>
+                                <img src="<%= mentor.profilePhoto  %>" alt="Profile Photo" class="w-full h-full object-cover">
+                                <% } else { %>
+                                    <div class="profile-image-fallback">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                <% } %>
+                        </div>
+                        <div class="text-center md:text-left">
+                            <h2 class="text-2xl font-bold"><%= mentor.name %></h2>
+                            <p class="text-blue-200"><%= mentor.workingField || 'Field not specified' %></p>
+                            <div class="mt-2 flex items-center justify-center md:justify-start">
+                                <div class="star-rating flex">
+                                    <% for(let i = 1; i <= 5; i++) { %>
+                                        <% if (i <= Math.floor(mentor.ratings)) { %>
+                                            <i class="fas fa-star"></i>
+                                        <% } else if (i - 0.5 <= mentor.ratings) { %>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        <% } else { %>
+                                            <i class="far fa-star"></i>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                                <span class="ml-2 text-white"><%= mentor.ratings %> (<%= mentor.reviews.length %> reviews)</span>
+                            </div>
+                            <div class="mt-2">
+                                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded">
+                                    <%= mentor.applicationStatus %>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Content -->
+                <div class="p-6">
+                    <!-- Basic Information -->
+                    <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-600">Country of Birth:</p>
+                                <p class="font-medium"><%= mentor.countryOfBirth || 'Not specified' %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Current Location:</p>
+                                <p class="font-medium"><%= mentor.currentCity %>, <%= mentor.currentCountry %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">College:</p>
+                                <p class="font-medium"><%= mentor.collegeName || 'Not specified' %></p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Status:</p>
+                                <p class="font-medium"><%= mentor.status || 'Not specified' %></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- About -->
+                    <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">About Me</h3>
+                        <p class="text-gray-700"><%= mentor.about || 'No information provided.' %></p>
+                    </div>
+
+                    <!-- Languages -->
+                    <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Languages</h3>
+                        <% if (mentor.languages && mentor.languages.length > 0) { %>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <% mentor.languages.forEach(lang => { %>
+                                    <div class="flex items-center">
+                                        <span class="w-1/2 font-medium"><%= lang.language %></span>
+                                        <span class="w-1/2 text-gray-600"><%= lang.proficiency %></span>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-gray-600">No languages specified.</p>
+                        <% } %>
+                    </div>
+
+                    <!-- Pricing -->
+                    <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Pricing</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white p-4 rounded shadow-sm border border-gray-200">
+                                <div class="text-center">
+                                    <p class="text-gray-600">30 Minutes Session</p>
+                                    <p class="text-2xl font-bold text-blue-600">$<%= mentor.price30 %></p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-4 rounded shadow-sm border border-gray-200">
+                                <div class="text-center">
+                                    <p class="text-gray-600">60 Minutes Session</p>
+                                    <p class="text-2xl font-bold text-blue-600">$<%= mentor.price60 %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Availability -->
+                    <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Availability</h3>
+                        
+                        <div class="mb-4">
+                            <h4 class="font-medium text-gray-700 mb-2">Available Days:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <% if (mentor.days && mentor.days.length > 0) { %>
+                                    <% mentor.days.forEach(day => { %>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"><%= day %></span>
+                                    <% }); %>
+                                <% } else { %>
+                                    <p class="text-gray-600">No days specified.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Time Slots:</h4>
+                            <% if (mentor.timeSlots && mentor.timeSlots.length > 0) { %>
+                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                    <% mentor.timeSlots.forEach(slot => { %>
+                                        <div class="bg-gray-200 px-3 py-2 rounded text-sm">
+                                            <%= slot.time %> (<%= slot.duration %> min)
+                                        </div>
+                                    <% }); %>
+                                </div>
+                            <% } else { %>
+                                <p class="text-gray-600">No time slots specified.</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Loan Information (if applicable) -->
+                    <% if (mentor.hasLoan) { %>
+                        <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Loan Information</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-gray-600">Loan Amount:</p>
+                                    <p class="font-medium">$<%= mentor.loanDetails.amount %></p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Purpose:</p>
+                                    <p class="font-medium"><%= mentor.loanDetails.purpose || 'Not specified' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <!-- Reviews -->
+                    <div class="profile-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Reviews (<%= mentor.reviews.length %>)</h3>
+                        
+                        <% if (mentor.reviews && mentor.reviews.length > 0) { %>
+                            <div class="space-y-4" id="reviews-container">
+                                <% mentor.reviews.slice(0, 5).forEach(review => { %>
+                                    <div class="bg-white p-4 rounded shadow-sm review-item">
+                                        <div class="flex justify-between mb-2">
+                                            <div class="star-rating">
+                                                <% for(let i = 1; i <= 5; i++) { %>
+                                                    <i class="<%= i <= review.rating ? 'fas' : 'far' %> fa-star"></i>
+                                                <% } %>
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <%= new Date(review.createdAt).toLocaleDateString() %>
+                                            </div>
+                                        </div>
+                                        <p class="text-gray-700"><%= review.content %></p>
+                                    </div>
+                                <% }); %>
+                            </div>
+                            
+                            <!-- Hidden reviews that will be shown when "View All" is clicked -->
+                            <div class="space-y-4 hidden" id="hidden-reviews">
+                                <% if (mentor.reviews.length > 5) { %>
+                                    <% mentor.reviews.slice(5).forEach(review => { %>
+                                        <div class="bg-white p-4 rounded shadow-sm review-item">
+                                            <div class="flex justify-between mb-2">
+                                                <div class="star-rating">
+                                                    <% for(let i = 1; i <= 5; i++) { %>
+                                                        <i class="<%= i <= review.rating ? 'fas' : 'far' %> fa-star"></i>
+                                                    <% } %>
+                                                </div>
+                                                <div class="text-sm text-gray-500">
+                                                    <%= new Date(review.createdAt).toLocaleDateString() %>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-700"><%= review.content %></p>
+                                        </div>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                            
+                            <% if (mentor.reviews.length > 5) { %>
+                                <div class="mt-4 text-center">
+                                    <button id="view-all-reviews" class="text-blue-600 hover:text-blue-800 font-medium">
+                                        View All Reviews
+                                    </button>
+                                    <button id="show-less-reviews" class="text-blue-600 hover:text-blue-800 font-medium hidden">
+                                        Show Less
+                                    </button>
+                                </div>
+                            <% } %>
+                        <% } else { %>
+                            <p class="text-gray-600">No reviews yet.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">No Mentor Profile Found</h2>
+                <p class="text-gray-600 mb-6">You haven't created a mentor profile yet or there was an error retrieving your profile.</p>
+                <a href="/create-profile" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                    Create Profile
+                </a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        // View All Reviews functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewAllBtn = document.getElementById('view-all-reviews');
+            const showLessBtn = document.getElementById('show-less-reviews');
+            const hiddenReviews = document.getElementById('hidden-reviews');
+            
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', function() {
+                    // Show hidden reviews
+                    hiddenReviews.classList.remove('hidden');
+                    // Hide "View All" button
+                    viewAllBtn.classList.add('hidden');
+                    // Show "Show Less" button
+                    showLessBtn.classList.remove('hidden');
+                    
+                    // Smooth scroll to the first hidden review
+                    const firstHiddenReview = hiddenReviews.querySelector('.review-item');
+                    if (firstHiddenReview) {
+                        firstHiddenReview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+            
+            if (showLessBtn) {
+                showLessBtn.addEventListener('click', function() {
+                    // Hide the additional reviews
+                    hiddenReviews.classList.add('hidden');
+                    // Show "View All" button
+                    viewAllBtn.classList.remove('hidden');
+                    // Hide "Show Less" button
+                    showLessBtn.classList.add('hidden');
+                    
+                    // Scroll back to the reviews section
+                    const reviewsSection = document.querySelector('#reviews-container');
+                    if (reviewsSection) {
+                        reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+        });
+        
+        // Add animation to review items
+        const reviewItems = document.querySelectorAll('.review-item');
+        reviewItems.forEach((item, index) => {
+            // Add a slight delay to each item for a staggered animation effect
+            item.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.1}s forwards`;
+        });
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .review-item {
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .review-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</body>
+</html>

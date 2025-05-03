@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Mentor Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+    <style>
+        .form-section {
+            transition: all 0.3s ease;
+        }
+        .form-section:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .custom-file-input::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        .custom-file-input::before {
+            content: 'Select file';
+            display: inline-block;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            padding: 0.375rem 0.75rem;
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .custom-file-input:hover::before {
+            background: #e5e7eb;
+        }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 5px;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            background-color: white;
+        }
+        .tag {
+            display: flex;
+            align-items: center;
+            margin: 2px;
+            padding: 2px 8px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+        }
+        .tag-close {
+            margin-left: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .time-slot {
+            display: flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            padding: 5px 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .profile-image-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #999;
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Edit Mentor Profile</h1>
+            <a href="/my-profile" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Profile
+            </a>
+        </div>
+
+        <% if (locals.messages && messages.error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><%= messages.error %></span>
+            </div>
+        <% } %>
+
+        <% if (locals.messages && messages.success) { %>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline"><%= messages.success %></span>
+            </div>
+        <% } %>
+
+        <div class="flex border-b border-gray-200 mb-6">
+            <button class="tab-button px-4 py-2 font-medium text-gray-700 active" data-tab="basicInfo">Basic Info</button>
+            <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="languages">Languages</button>
+            <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="pricing">Pricing & Availability</button>
+            <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="documents">Documents</button>
+            <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="loanInfo">Loan Information</button>
+        </div>
+
+        <form id="edit-profile-form" action="/mentor/update-profile" method="POST" enctype="multipart/form-data" class="bg-white rounded-lg shadow-md overflow-hidden">
+            <input type="hidden" name="_id" value="<%= mentor._id %>">
+
+            <div class="p-6">
+                <div id="basicInfo" class="tab-content">
+                    <div class="form-section mb-8 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Personal Information</h3>
+                        
+                        <div class="mb-6">
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white mb-4">
+                                    <img 
+                                        id="profile-preview" 
+                                        src="<%= mentor.profilePhoto ? mentor.profilePhoto : '' %>" 
+                                        alt="Profile Photo" 
+                                        class="w-full h-full object-cover <%= mentor.profilePhoto ? '' : 'hidden' %>">
+                                
+                                    <% if (!mentor.profilePhoto) { %>
+                                        <div class="profile-image-fallback absolute inset-0 flex items-center justify-center bg-gray-200 text-gray-500">
+                                            <i class="fas fa-user text-3xl"></i>
+                                        </div>
+                                    <% } %>
+                                
+                                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                        <label for="profilePhoto" class="cursor-pointer text-white text-center">
+                                            <i class="fas fa-camera text-2xl"></i>
+                                            <p class="text-sm">Change Photo</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" class="hidden">
+                                
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input type="text" id="name" name="name" value="<%= mentor.name %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Current Status</label>
+                                <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="" disabled>Select your status</option>
+                                    <option value="Student" <%= mentor.status === 'Student' ? 'selected' : '' %>>Student</option>
+                                    <option value="Working Professional" <%= mentor.status === 'Working Professional' ? 'selected' : '' %>>Working Professional</option>
+                                    <option value="Freelancer" <%= mentor.status === 'Freelancer' ? 'selected' : '' %>>Freelancer</option>
+                                    <option value="Entrepreneur" <%= mentor.status === 'Entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
+                                    <option value="Other" <%= mentor.status === 'Other' ? 'selected' : '' %>>Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label for="workingField" class="block text-sm font-medium text-gray-700 mb-1">Working Field</label>
+                                <input type="text" id="workingField" name="workingField" value="<%= mentor.workingField %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="collegeName" class="block text-sm font-medium text-gray-700 mb-1">College Name</label>
+                                <input type="text" id="collegeName" name="collegeName" value="<%= mentor.collegeName %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="countryOfBirth" class="block text-sm font-medium text-gray-700 mb-1">Country of Birth</label>
+                                <input type="text" id="countryOfBirth" name="countryOfBirth" value="<%= mentor.countryOfBirth %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="currentCountry" class="block text-sm font-medium text-gray-700 mb-1">Current Country</label>
+                                <input type="text" id="currentCountry" name="currentCountry" value="<%= mentor.currentCountry %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="currentCity" class="block text-sm font-medium text-gray-700 mb-1">Current City</label>
+                                <input type="text" id="currentCity" name="currentCity" value="<%= mentor.currentCity %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">About Me</h3>
+                        <div>
+                            <label for="about" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                            <textarea id="about" name="about" rows="5" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><%= mentor.about %></textarea>
+                            <p class="text-sm text-gray-500 mt-1">Write a short bio that describes your expertise, experience, and what makes you a good mentor.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Languages Tab -->
+                <div id="languages" class="tab-content hidden">
+                    <div class="form-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Languages</h3>
+                        
+                        <div id="languages-container">
+                            <% if (mentor.languages && mentor.languages.length > 0) { %>
+                                <% mentor.languages.forEach((lang, index) => { %>
+                                    <div class="language-item mb-4 p-3 bg-white rounded border border-gray-200">
+                                        <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                            <div class="flex-1">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                                                <input type="text" name="languages[<%= index %>][language]" value="<%= lang.language %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                            </div>
+                                            <div class="flex-1">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Proficiency</label>
+                                                <select name="languages[<%= index %>][proficiency]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                    <option value="Native" <%= lang.proficiency === 'Native' ? 'selected' : '' %>>Native</option>
+                                                    <option value="Advanced" <%= lang.proficiency === 'Advanced' ? 'selected' : '' %>>Advanced</option>
+                                                    <option value="Intermediate" <%= lang.proficiency === 'Intermediate' ? 'selected' : '' %>>Intermediate</option>
+                                                    <option value="Beginner" <%= lang.proficiency === 'Beginner' ? 'selected' : '' %>>Beginner</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <button type="button" class="remove-language text-red-500 hover:text-red-700" onclick="removeLanguage(this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <div class="language-item mb-4 p-3 bg-white rounded border border-gray-200">
+                                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                                        <div class="flex-1">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                                            <input type="text" name="languages[0][language]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Proficiency</label>
+                                            <select name="languages[0][proficiency]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="Native">Native</option>
+                                                <option value="Advanced">Advanced</option>
+                                                <option value="Intermediate">Intermediate</option>
+                                                <option value="Beginner">Beginner</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <button type="button" class="remove-language text-red-500 hover:text-red-700" onclick="removeLanguage(this)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <button type="button" id="add-language" class="mt-2 flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-plus mr-1"></i> Add Another Language
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Pricing & Availability Tab -->
+                <div id="pricing" class="tab-content hidden">
+                    <div class="form-section mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Pricing</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="price30" class="block text-sm font-medium text-gray-700 mb-1">30 Minutes Session Price ($)</label>
+                                <input type="number" id="price30" name="price30" min="0" step="0.01" value="<%= mentor.price30 %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            
+                            <div>
+                                <label for="price60" class="block text-sm font-medium text-gray-700 mb-1">60 Minutes Session Price ($)</label>
+                                <input type="number" id="price60" name="price60" min="0" step="0.01" value="<%= mentor.price60 %>" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Availability</h3>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Available Days</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <% const validDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; %>
+                                <% validDays.forEach(day => { %>
+                                    <div class="flex items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            id="day-<%= day %>" 
+                                            name="days" 
+                                            value="<%= day %>" 
+                                            <%= mentor.days && mentor.days.includes(day) ? 'checked' : '' %>
+                                            class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        >
+                                        <label for="day-<%= day %>" class="ml-2 text-gray-700"><%= day %></label>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Available Dates</label>
+                            <div class="flex items-center">
+                                <input type="text" id="available-dates" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Select dates...">
+                                <button type="button" id="add-date" class="ml-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                                    Add
+                                </button>
+                            </div>
+                            
+                            <div id="dates-container" class="mt-2 flex flex-wrap gap-2">
+                                <% if (mentor.availableDates && mentor.availableDates.length > 0) { %>
+                                    <% mentor.availableDates.forEach(date => { %>
+                                        <div class="tag">
+                                            <input type="hidden" name="availableDates" value="<%= date %>">
+                                            <span><%= date %></span>
+                                            <span class="tag-close" onclick="this.parentElement.remove()">×</span>
+                                        </div>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Time Slots</label>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <input type="text" id="time-slot-input" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter time (e.g., 09:00 AM)">
+                                </div>
+                                <div>
+                                    <select id="duration-input" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="30">30 minutes</option>
+                                        <option value="60" selected>60 minutes</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="button" id="add-time-slot" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                                Add Time Slot
+                            </button>
+                            
+                            <div id="time-slots-container" class="mt-4">
+                                <% if (mentor.timeSlots && mentor.timeSlots.length > 0) { %>
+                                    <% mentor.timeSlots.forEach((slot, index) => { %>
+                                        <div class="time-slot">
+                                            <input type="hidden" name="timeSlots[<%= index %>][time]" value="<%= slot.time %>">
+                                            <input type="hidden" name="timeSlots[<%= index %>][duration]" value="<%= slot.duration %>">
+                                            <span><%= slot.time %> (<%= slot.duration %> min)</span>
+                                            <button type="button" class="ml-auto text-red-500" onclick="this.parentElement.remove()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Documents Tab -->
+                <div id="documents" class="tab-content hidden">
+                    <div class="form-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Document Uploads</h3>
+                        <p class="text-sm text-gray-600 mb-6">Please upload the required documents. Accepted formats: PDF, JPG, PNG (Max 5MB each)</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="idProof" class="block text-sm font-medium text-gray-700 mb-1">ID Proof</label>
+                                <div class="flex flex-col">
+                                    <input type="file" id="idProof" name="idProof" accept=".pdf,.jpg,.jpeg,.png" class="custom-file-input">
+                                    <% if (mentor.documents && mentor.documents.idProof) { %>
+                                        <div class="mt-2 flex items-center">
+                                            <span class="text-sm text-gray-600">Current file: </span>
+                                            <span class="ml-2 text-sm text-blue-600"><%= mentor.documents.idProof.split('/').pop() %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="collegeId" class="block text-sm font-medium text-gray-700 mb-1">College ID</label>
+                                <div class="flex flex-col">
+                                    <input type="file" id="collegeId" name="collegeId" accept=".pdf,.jpg,.jpeg,.png" class="custom-file-input">
+                                    <% if (mentor.documents && mentor.documents.collegeId) { %>
+                                        <div class="mt-2 flex items-center">
+                                            <span class="text-sm text-gray-600">Current file: </span>
+                                            <span class="ml-2 text-sm text-blue-600"><%= mentor.documents.collegeId.split('/').pop() %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="addressProof" class="block text-sm font-medium text-gray-700 mb-1">Address Proof</label>
+                                <div class="flex flex-col">
+                                    <input type="file" id="addressProof" name="addressProof" accept=".pdf,.jpg,.jpeg,.png" class="custom-file-input">
+                                    <% if (mentor.documents && mentor.documents.addressProof) { %>
+                                        <div class="mt-2 flex items-center">
+                                            <span class="text-sm text-gray-600">Current file: </span>
+                                            <span class="ml-2 text-sm text-blue-600"><%= mentor.documents.addressProof.split('/').pop() %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="additionalDoc" class="block text-sm font-medium text-gray-700 mb-1">Additional Document (Optional)</label>
+                                <div class="flex flex-col">
+                                    <input type="file" id="additionalDoc" name="additionalDoc" accept=".pdf,.jpg,.jpeg,.png" class="custom-file-input">
+                                    <% if (mentor.documents && mentor.documents.additionalDoc) { %>
+                                        <div class="mt-2 flex items-center">
+                                            <span class="text-sm text-gray-600">Current file: </span>
+                                            <span class="ml-2 text-sm text-blue-600"><%= mentor.documents.additionalDoc.split('/').pop() %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loan Information Tab -->
+                <div id="loanInfo" class="tab-content hidden">
+                    <div class="form-section p-4 bg-gray-50 rounded-lg">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Loan Information</h3>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center">
+                                <input 
+                                    type="checkbox" 
+                                    id="hasLoan" 
+                                    name="hasLoan" 
+                                    <%= mentor.hasLoan ? 'checked' : '' %>
+                                    class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                >
+                                <label for="hasLoan" class="ml-2 text-gray-700">I have a student loan</label>
+                            </div>
+                        </div>
+                        
+                        <div id="loan-details" class="<%= !mentor.hasLoan ? 'hidden' : '' %>">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="loanAmount" class="block text-sm font-medium text-gray-700 mb-1">Loan Amount ($)</label>
+                                    <input 
+                                        type="number" 
+                                        id="loanAmount" 
+                                        name="loanDetails[amount]" 
+                                        min="0" 
+                                        step="0.01" 
+                                        value="<%= mentor.loanDetails ? mentor.loanDetails.amount : '' %>" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        <%= !mentor.hasLoan ? 'disabled' : '' %>
+                                    >
+                                </div>
+                                
+                                <div>
+                                    <label for="loanPurpose" class="block text-sm font-medium text-gray-700 mb-1">Loan Purpose</label>
+                                    <input 
+                                        type="text" 
+                                        id="loanPurpose" 
+                                        name="loanDetails[purpose]" 
+                                        value="<%= mentor.loanDetails ? mentor.loanDetails.purpose : '' %>" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        <%= !mentor.hasLoan ? 'disabled' : '' %>
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+                <button type="button" id="prev-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded mr-2 hidden">
+                    <i class="fas fa-arrow-left mr-1"></i> Previous
+                </button>
+                <button type="button" id="next-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                    Next
+                    <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+                <button type="submit" id="submit-btn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded hidden">
+                    <i class="fas fa-save mr-1"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script>
+        // Tab navigation
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        let currentTabIndex = 0;
+        const totalTabs = tabButtons.length;
+        
+        function showTab(index) {
+            tabContents.forEach(content => content.classList.add('hidden'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            tabContents[index].classList.remove('hidden');
+            tabButtons[index].classList.add('active');
+            
+            // Show/hide navigation buttons
+            prevBtn.classList.toggle('hidden', index === 0);
+            nextBtn.classList.toggle('hidden', index === totalTabs - 1);
+            submitBtn.classList.toggle('hidden', index !== totalTabs - 1);
+            
+            currentTabIndex = index;
+        }
+        
+        tabButtons.forEach((button, index) => {
+            button.addEventListener('click', () => showTab(index));
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentTabIndex > 0) showTab(currentTabIndex - 1);
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentTabIndex < totalTabs - 1) showTab(currentTabIndex + 1);
+        });
+        
+        // Initialize tabs
+        showTab(0);
+        
+        // Preview image
+        // function previewImage(input, previewId) {
+        //     if (input.files && input.files[0]) {
+        //         const reader = new FileReader();
+        //         reader.onload = function(e) {
+        //             console.log(e.target.result);
+        //             document.getElementById(previewId).src = e.target.result;
+        //         };
+        //         reader.readAsDataURL(input.files[0]);
+        //     }
+        // }
+
+        document.getElementById('profilePhoto').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            let previewElement = document.getElementById('profile-preview');
+            
+            // If image doesn't exist (first time uploading), create and insert it
+            if (!previewElement) {
+                previewElement = document.createElement('img');
+                previewElement.id = 'profile-preview';
+                previewElement.alt = 'Profile Photo';
+                previewElement.className = 'w-full h-full object-cover';
+                
+                const container = event.target.closest('.relative');
+                if (container) {
+                    container.prepend(previewElement);
+                }
+            }
+
+            previewElement.src = e.target.result;
+
+            // Optionally hide the fallback icon
+            const fallback = document.querySelector('.profile-image-fallback');
+            if (fallback) fallback.style.display = 'none';
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+
+        
+        // Languages
+        document.getElementById('add-language').addEventListener('click', function() {
+            const container = document.getElementById('languages-container');
+            const index = container.querySelectorAll('.language-item').length;
+            
+            const languageItem = document.createElement('div');
+            languageItem.className = 'language-item mb-4 p-3 bg-white rounded border border-gray-200';
+            languageItem.innerHTML = `
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Language</label>
+                        <input type="text" name="languages[${index}][language]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Proficiency</label>
+                        <select name="languages[${index}][proficiency]" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Native">Native</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Beginner">Beginner</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center">
+                        <button type="button" class="remove-language text-red-500 hover:text-red-700" onclick="removeLanguage(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(languageItem);
+        });
+        
+        function removeLanguage(button) {
+            const item = button.closest('.language-item');
+            item.remove();
+            
+            // Reindex remaining items
+            const container = document.getElementById('languages-container');
+            const items = container.querySelectorAll('.language-item');
+            items.forEach((item, index) => {
+                const languageInput = item.querySelector('input[name^="languages"]');
+                const proficiencySelect = item.querySelector('select[name^="languages"]');
+                
+                languageInput.name = `languages[${index}][language]`;
+                proficiencySelect.name = `languages[${index}][proficiency]`;
+            });
+        }
+        
+        // Time slots
+        document.getElementById('add-time-slot').addEventListener('click', function() {
+            const time = document.getElementById('time-slot-input').value.trim();
+            const duration = document.getElementById('duration-input').value;
+            
+            if (time) {
+                const container = document.getElementById('time-slots-container');
+                const index = container.querySelectorAll('.time-slot').length;
+                
+                const timeSlot = document.createElement('div');
+                timeSlot.className = 'time-slot';
+                timeSlot.innerHTML = `
+                    <input type="hidden" name="timeSlots[${index}][time]" value="${time}">
+                    <input type="hidden" name="timeSlots[${index}][duration]" value="${duration}">
+                    <span>${time} (${duration} min)</span>
+                    <button type="button" class="ml-auto text-red-500" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                container.appendChild(timeSlot);
+                document.getElementById('time-slot-input').value = '';
+            }
+        });
+        
+        // Initialize flatpickr
+        const availableDatesInput = flatpickr('#available-dates', {
+            minDate: 'today',
+            dateFormat: 'Y-m-d',
+            locale: {
+                firstDayOfWeek: 1
+            }
+        });
+        
+        // Add date
+        document.getElementById('add-date').addEventListener('click', function() {
+            const selectedDate = document.getElementById('available-dates')._flatpickr.selectedDates[0];
+            
+            if (selectedDate) {
+                const formattedDate = selectedDate.toISOString().split('T')[0];
+                const container = document.getElementById('dates-container');
+                
+                // Check if date already exists
+                const existingDates = Array.from(container.querySelectorAll('input[name="availableDates"]')).map(input => input.value);
+                if (!existingDates.includes(formattedDate)) {
+                    const tag = document.createElement('div');
+                    tag.className = 'tag';
+                    tag.innerHTML = `
+                        <input type="hidden" name="availableDates" value="${formattedDate}">
+                        <span>${formattedDate}</span>
+                        <span class="tag-close" onclick="this.parentElement.remove()">×</span>
+                    `;
+                    
+                    container.appendChild(tag);
+                }
+                
+                document.getElementById('available-dates')._flatpickr.clear();
+            }
+        });
+        
+        // Toggle loan details
+        document.getElementById('hasLoan').addEventListener('change', function() {
+            const loanDetails = document.getElementById('loan-details');
+            const inputs = loanDetails.querySelectorAll('input');
+            
+            if (this.checked) {
+                loanDetails.classList.remove('hidden');
+                inputs.forEach(input => input.removeAttribute('disabled'));
+            } else {
+                loanDetails.classList.add('hidden');
+                inputs.forEach(input => input.setAttribute('disabled', 'disabled'));
+            }
+        });
+    </script>
+</body>
+</html>

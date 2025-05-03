@@ -784,26 +784,8 @@
                     </div>
                 </div>
 
-                <div class="reviews-section">
-                    <h3 class="section-title">Student Reviews</h3>
-                    <% reviews.forEach(review => { %>
-                        <div class="review-card">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="mb-0 fw-bold"><%= review.userName %></h5>
-                                <div class="star-rating">
-                                    <% for(let i = 0; i < review.rating; i++) { %>
-                                        <i class="fas fa-star"></i>
-                                    <% } %>
-                                    <% for(let i = review.rating; i < 5; i++) { %>
-                                        <i class="far fa-star"></i>
-                                    <% } %>
-                                </div>
-                            </div>
-                            <p class="mb-2"><%= review.comment %></p>
-                            <small class="text-muted"><%= review.date %></small>
-                        </div>
-                    <% }) %>
-                </div>
+                <!-- Include the reviews section from the separate template -->
+                <%- include('reviews', { reviews: reviews }) %>
             </div>
         </div>
     </div>
