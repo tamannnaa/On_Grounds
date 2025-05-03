@@ -584,10 +584,6 @@ const registerMentor = async (req, res) => {
                     );
                 } else {
                     savedApplication = await new Mentor(mentorData).save();
-
-                    // Update the user to link them to their mentor profile
-                    // Note: User schema doesn't have isMentor or mentorId fields in the provided schema
-                    // This functionality would need to be added to the User schema if needed
                 }
 
                 res.status(200).json({ 

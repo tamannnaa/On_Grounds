@@ -160,50 +160,32 @@ const addReview = async (req, res) => {
     try {
         const { mentorId } = req.params;
         const { content, rating } = req.body;
-        const studentId = req.user._id; // Assuming you have authentication middleware that sets req.user
+        const studentId = req.user._id; 
         
-        // Validate mentorId
         if (!isValidObjectId(mentorId)) {
             return res.status(400).json({ success: false, message: 'Invalid mentor ID' });
         }
         
-        // Validate rating
         const ratingNum = parseInt(rating);
         if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
             return res.status(400).json({ success: false, message: 'Rating must be between 1 and 5' });
         }
         
-        // Validate content
         if (!content || content.trim() === '') {
             return res.status(400).json({ success: false, message: 'Review content is required' });
         }
         
-        // Find the mentor
         const mentor = await Mentor.findById(mentorId);
         if (!mentor) {
             return res.status(404).json({ success: false, message: 'Mentor not found' });
         }
         
-        // // Check if student has already reviewed this mentor
-        // const existingReview = mentor.reviews.find(review => 
-        //     review.student.toString() === studentId.toString()
-        // );
-        
-        // if (existingReview) {
-        //     return res.status(400).json({ 
-        //         success: false, 
-        //         message: 'You have already reviewed this mentor' 
-        //     });
-        // }
-        
-        // Create review object
         const reviewData = {
             student: studentId,
             content,
             rating: ratingNum
         };
         
-        // Add review using the custom method (this will also update the average rating)
         await mentor.addReview(reviewData);
         
         return res.status(201).json({
@@ -225,61 +207,18 @@ const addReview = async (req, res) => {
     }
 };
 
-// Get all reviews for a mentor
-const getMentorReviews = async (req, res) => {
-    try {
-        const { mentorId } = req.params;
-        
-        // Validate mentorId
-        if (!isValidObjectId(mentorId)) {
-            return res.status(400).json({ success: false, message: 'Invalid mentor ID' });
-        }
-        
-        // Find mentor and populate the student field in reviews
-        const mentor = await Mentor.findById(mentorId)
-            .select('reviews ratings')
-            .populate({
-                path: 'reviews.student',
-                select: 'name profilePhoto' // Adjust based on your User schema
-            });
-            
-        if (!mentor) {
-            return res.status(404).json({ success: false, message: 'Mentor not found' });
-        }
-        
-        return res.status(200).json({
-            success: true,
-            data: {
-                reviews: mentor.reviews,
-                averageRating: mentor.ratings,
-                totalReviews: mentor.reviews.length
-            }
-        });
-        
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-        return res.status(500).json({ 
-            success: false, 
-            message: 'Failed to fetch reviews',
-            error: error.message 
-        });
-    }
-};
 
-// Delete a review (optional - for admin or the review author)
 const deleteReview = async (req, res) => {
     try {
         const { mentorId, reviewId } = req.params;
-        const userId = req.user._id; // From authentication middleware
-        const isAdmin = req.user.role === 'admin'; // Assuming your User model has a role field
+        const userId = req.user._id;
+        const isAdmin = req.user.role === 'admin'; 
         
-        // Find the mentor
         const mentor = await Mentor.findById(mentorId);
         if (!mentor) {
             return res.status(404).json({ success: false, message: 'Mentor not found' });
         }
         
-        // Find the review
         const reviewIndex = mentor.reviews.findIndex(review => 
             review._id.toString() === reviewId
         );
@@ -288,7 +227,6 @@ const deleteReview = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Review not found' });
         }
         
-        // Check if user is authorized to delete this review
         const review = mentor.reviews[reviewIndex];
         if (!isAdmin && review.student.toString() !== userId.toString()) {
             return res.status(403).json({ 
@@ -297,10 +235,8 @@ const deleteReview = async (req, res) => {
             });
         }
         
-        // Remove the review
         mentor.reviews.splice(reviewIndex, 1);
         
-        // Recalculate average rating
         if (mentor.reviews.length > 0) {
             const totalRating = mentor.reviews.reduce((sum, r) => sum + r.rating, 0);
             mentor.ratings = parseFloat((totalRating / mentor.reviews.length).toFixed(1));
@@ -308,7 +244,6 @@ const deleteReview = async (req, res) => {
             mentor.ratings = 0;
         }
         
-        // Save the updated mentor
         await mentor.save();
         
         return res.status(200).json({
@@ -332,10 +267,9 @@ const deleteReview = async (req, res) => {
 
 const myProfile=async (req, res) => {
     try {
-      // Find mentor profile by user ID (from auth middleware)
       const mentor = await Mentor.findOne({ user: req.user.id })
-        .populate('user', 'email') // Optionally populate user email or other fields
-        .populate('reviews.student', 'name'); // Populate student names in reviews
+        .populate('user', 'email')
+        .populate('reviews.student', 'name'); 
       
       if (!mentor) {
         return res.render('my-mentor-profile', { 
@@ -390,8 +324,6 @@ const updateProfile=async (req, res) => {
             req.flash('error', 'Mentor profile not found');
             return res.redirect('/dashboard');
         }
-
-        // Basic information
         mentor.name = req.body.name;
         mentor.status = req.body.status;
         mentor.workingField = req.body.workingField;
@@ -400,11 +332,8 @@ const updateProfile=async (req, res) => {
         mentor.currentCountry = req.body.currentCountry;
         mentor.currentCity = req.body.currentCity;
         mentor.about = req.body.about;
-        
-        // Handle profile photo upload
         if (req.files.profilePhoto) {
             const profilePhoto = req.files.profilePhoto[0];
-            // Delete old profile photo if exists
             if (mentor.profilePhoto) {
                 const oldPhotoPath = path.join(__dirname, '../public', mentor.profilePhoto);
                 if (fs.existsSync(oldPhotoPath)) {
@@ -414,13 +343,10 @@ const updateProfile=async (req, res) => {
             mentor.profilePhoto = `/uploads/profile-photos/${profilePhoto.filename}`;
         }
         
-        // Languages
         if (req.body.languages) {
-            // If languages is an array of objects
             if (Array.isArray(req.body.languages)) {
                 mentor.languages = req.body.languages;
             } 
-            // If there's only one language (not an array)
             else if (typeof req.body.languages === 'object') {
                 mentor.languages = [req.body.languages];
             }
@@ -428,25 +354,19 @@ const updateProfile=async (req, res) => {
             mentor.languages = [];
         }
         
-        // Pricing
         mentor.price30 = req.body.price30 || 0;
         mentor.price60 = req.body.price60 || 0;
         
-        // Availability
         mentor.days = Array.isArray(req.body.days) ? req.body.days : (req.body.days ? [req.body.days] : []);
         
-        // Available dates
         mentor.availableDates = Array.isArray(req.body.availableDates) 
             ? req.body.availableDates 
             : (req.body.availableDates ? [req.body.availableDates] : []);
         
-        // Time slots
         if (req.body.timeSlots) {
-            // Handle array of time slots
             if (Array.isArray(req.body.timeSlots)) {
                 mentor.timeSlots = req.body.timeSlots;
             } 
-            // Handle single time slot
             else if (typeof req.body.timeSlots === 'object') {
                 mentor.timeSlots = [req.body.timeSlots];
             }
@@ -454,18 +374,14 @@ const updateProfile=async (req, res) => {
             mentor.timeSlots = [];
         }
         
-        // Documents
         if (!mentor.documents) {
             mentor.documents = {};
         }
         
-        // Handle document uploads
         const documentTypes = ['idProof', 'collegeId', 'addressProof', 'additionalDoc'];
         for (const docType of documentTypes) {
             if (req.files[docType]) {
                 const document = req.files[docType][0];
-                
-                // Delete old document if exists
                 if (mentor.documents[docType]) {
                     const oldDocPath = path.join(__dirname, '../public', mentor.documents[docType]);
                     if (fs.existsSync(oldDocPath)) {
@@ -477,7 +393,6 @@ const updateProfile=async (req, res) => {
             }
         }
         
-        // Loan information
         mentor.hasLoan = req.body.hasLoan === 'on';
         if (mentor.hasLoan && req.body.loanDetails) {
             mentor.loanDetails = {
@@ -505,7 +420,6 @@ module.exports = {
     becomeMentor,
     getApplicationStatus,
     addReview,
-    getMentorReviews,
     deleteReview,
     myProfile,
     getEditProfilePage,

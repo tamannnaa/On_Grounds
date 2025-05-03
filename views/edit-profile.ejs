@@ -200,7 +200,6 @@
                     </div>
                 </div>
                 
-                <!-- Languages Tab -->
                 <div id="languages" class="tab-content hidden">
                     <div class="form-section p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Languages</h3>
@@ -263,7 +262,6 @@
                     </div>
                 </div>
                 
-                <!-- Pricing & Availability Tab -->
                 <div id="pricing" class="tab-content hidden">
                     <div class="form-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Pricing</h3>
@@ -363,7 +361,6 @@
                     </div>
                 </div>
                 
-                <!-- Documents Tab -->
                 <div id="documents" class="tab-content hidden">
                     <div class="form-section p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Document Uploads</h3>
@@ -425,7 +422,6 @@
                     </div>
                 </div>
                 
-                <!-- Loan Information Tab -->
                 <div id="loanInfo" class="tab-content hidden">
                     <div class="form-section p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Loan Information</h3>
@@ -493,7 +489,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
     <script>
-        // Tab navigation
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
         const prevBtn = document.getElementById('prev-btn');
@@ -510,7 +505,6 @@
             tabContents[index].classList.remove('hidden');
             tabButtons[index].classList.add('active');
             
-            // Show/hide navigation buttons
             prevBtn.classList.toggle('hidden', index === 0);
             nextBtn.classList.toggle('hidden', index === totalTabs - 1);
             submitBtn.classList.toggle('hidden', index !== totalTabs - 1);
@@ -530,20 +524,8 @@
             if (currentTabIndex < totalTabs - 1) showTab(currentTabIndex + 1);
         });
         
-        // Initialize tabs
         showTab(0);
-        
-        // Preview image
-        // function previewImage(input, previewId) {
-        //     if (input.files && input.files[0]) {
-        //         const reader = new FileReader();
-        //         reader.onload = function(e) {
-        //             console.log(e.target.result);
-        //             document.getElementById(previewId).src = e.target.result;
-        //         };
-        //         reader.readAsDataURL(input.files[0]);
-        //     }
-        // }
+       
 
         document.getElementById('profilePhoto').addEventListener('change', function(event) {
     const file = event.target.files[0];
@@ -553,7 +535,6 @@
         reader.onload = function(e) {
             let previewElement = document.getElementById('profile-preview');
             
-            // If image doesn't exist (first time uploading), create and insert it
             if (!previewElement) {
                 previewElement = document.createElement('img');
                 previewElement.id = 'profile-preview';
@@ -568,7 +549,6 @@
 
             previewElement.src = e.target.result;
 
-            // Optionally hide the fallback icon
             const fallback = document.querySelector('.profile-image-fallback');
             if (fallback) fallback.style.display = 'none';
         };
@@ -577,8 +557,6 @@
     }
 });
 
-        
-        // Languages
         document.getElementById('add-language').addEventListener('click', function() {
             const container = document.getElementById('languages-container');
             const index = container.querySelectorAll('.language-item').length;
@@ -615,7 +593,6 @@
             const item = button.closest('.language-item');
             item.remove();
             
-            // Reindex remaining items
             const container = document.getElementById('languages-container');
             const items = container.querySelectorAll('.language-item');
             items.forEach((item, index) => {
@@ -627,7 +604,6 @@
             });
         }
         
-        // Time slots
         document.getElementById('add-time-slot').addEventListener('click', function() {
             const time = document.getElementById('time-slot-input').value.trim();
             const duration = document.getElementById('duration-input').value;
@@ -652,7 +628,6 @@
             }
         });
         
-        // Initialize flatpickr
         const availableDatesInput = flatpickr('#available-dates', {
             minDate: 'today',
             dateFormat: 'Y-m-d',
@@ -661,7 +636,6 @@
             }
         });
         
-        // Add date
         document.getElementById('add-date').addEventListener('click', function() {
             const selectedDate = document.getElementById('available-dates')._flatpickr.selectedDates[0];
             
@@ -669,7 +643,6 @@
                 const formattedDate = selectedDate.toISOString().split('T')[0];
                 const container = document.getElementById('dates-container');
                 
-                // Check if date already exists
                 const existingDates = Array.from(container.querySelectorAll('input[name="availableDates"]')).map(input => input.value);
                 if (!existingDates.includes(formattedDate)) {
                     const tag = document.createElement('div');
@@ -687,7 +660,6 @@
             }
         });
         
-        // Toggle loan details
         document.getElementById('hasLoan').addEventListener('change', function() {
             const loanDetails = document.getElementById('loan-details');
             const inputs = loanDetails.querySelectorAll('input');

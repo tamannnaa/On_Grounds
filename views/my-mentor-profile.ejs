@@ -41,7 +41,6 @@
 
         <% if (mentor) { %>
             <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <!-- Profile Header -->
                 <div class="bg-blue-700 text-white p-6">
                     <div class="flex flex-col md:flex-row items-center">
                         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white mb-4 md:mb-0 md:mr-6">
@@ -79,9 +78,7 @@
                     </div>
                 </div>
 
-                <!-- Profile Content -->
                 <div class="p-6">
-                    <!-- Basic Information -->
                     <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -104,13 +101,11 @@
                         </div>
                     </div>
 
-                    <!-- About -->
                     <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">About Me</h3>
                         <p class="text-gray-700"><%= mentor.about || 'No information provided.' %></p>
                     </div>
 
-                    <!-- Languages -->
                     <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Languages</h3>
                         <% if (mentor.languages && mentor.languages.length > 0) { %>
@@ -127,7 +122,6 @@
                         <% } %>
                     </div>
 
-                    <!-- Pricing -->
                     <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Pricing</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -146,7 +140,6 @@
                         </div>
                     </div>
 
-                    <!-- Availability -->
                     <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Availability</h3>
                         
@@ -179,7 +172,6 @@
                         </div>
                     </div>
 
-                    <!-- Loan Information (if applicable) -->
                     <% if (mentor.hasLoan) { %>
                         <div class="profile-section mb-6 p-4 bg-gray-50 rounded-lg">
                             <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Loan Information</h3>
@@ -196,7 +188,6 @@
                         </div>
                     <% } %>
 
-                    <!-- Reviews -->
                     <div class="profile-section p-4 bg-gray-50 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Reviews (<%= mentor.reviews.length %>)</h3>
                         
@@ -219,7 +210,6 @@
                                 <% }); %>
                             </div>
                             
-                            <!-- Hidden reviews that will be shown when "View All" is clicked -->
                             <div class="space-y-4 hidden" id="hidden-reviews">
                                 <% if (mentor.reviews.length > 5) { %>
                                     <% mentor.reviews.slice(5).forEach(review => { %>
@@ -268,7 +258,6 @@
     </div>
 
     <script>
-        // View All Reviews functionality
         document.addEventListener('DOMContentLoaded', function() {
             const viewAllBtn = document.getElementById('view-all-reviews');
             const showLessBtn = document.getElementById('show-less-reviews');
@@ -276,14 +265,9 @@
             
             if (viewAllBtn) {
                 viewAllBtn.addEventListener('click', function() {
-                    // Show hidden reviews
                     hiddenReviews.classList.remove('hidden');
-                    // Hide "View All" button
                     viewAllBtn.classList.add('hidden');
-                    // Show "Show Less" button
                     showLessBtn.classList.remove('hidden');
-                    
-                    // Smooth scroll to the first hidden review
                     const firstHiddenReview = hiddenReviews.querySelector('.review-item');
                     if (firstHiddenReview) {
                         firstHiddenReview.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -293,14 +277,10 @@
             
             if (showLessBtn) {
                 showLessBtn.addEventListener('click', function() {
-                    // Hide the additional reviews
                     hiddenReviews.classList.add('hidden');
-                    // Show "View All" button
                     viewAllBtn.classList.remove('hidden');
-                    // Hide "Show Less" button
                     showLessBtn.classList.add('hidden');
                     
-                    // Scroll back to the reviews section
                     const reviewsSection = document.querySelector('#reviews-container');
                     if (reviewsSection) {
                         reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -309,10 +289,8 @@
             }
         });
         
-        // Add animation to review items
         const reviewItems = document.querySelectorAll('.review-item');
         reviewItems.forEach((item, index) => {
-            // Add a slight delay to each item for a staggered animation effect
             item.style.animation = `fadeIn 0.3s ease-in-out ${index * 0.1}s forwards`;
         });
     </script>

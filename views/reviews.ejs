@@ -59,7 +59,6 @@
             border-radius: 2px;
         }
 
-        /* Add Review Form Styles */
         .add-review-section {
             background: white;
             border-radius: 20px;
@@ -237,7 +236,6 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
     
     <script>
-        // Form submission with AJAX
         document.addEventListener('DOMContentLoaded', function() {
             const reviewForm = document.getElementById('review-form');
             if (reviewForm) {
@@ -262,19 +260,15 @@
                         const data = await response.json();
                         
                         if (data.success) {
-                            // Show success message
                             document.getElementById('success-message').style.display = 'block';
                             document.getElementById('error-message').style.display = 'none';
                             
-                            // Reset form
                             reviewForm.reset();
                             
-                            // Refresh page after 2 seconds to show the new review
                             setTimeout(() => {
                                 window.location.reload();
                             }, 2000);
                         } else {
-                            // Show error message
                             document.getElementById('error-message').textContent = data.message || 'Failed to submit review';
                             document.getElementById('error-message').style.display = 'block';
                             document.getElementById('success-message').style.display = 'none';
