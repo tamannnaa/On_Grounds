@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - OnGrounds</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        :root {
+            --primary-color: #1a1a1d;
+            --secondary-color: #950740;
+            --accent-color: #c5c6c7;
+            --text-color: #4e4e50;
+            --background-color: #f0f0f0;
+            --error-color: #ff4444;
+            --button-hover-color: #950740;
+            --login-gradient: linear-gradient(135deg, #1a1a1d, #4e4e50);
+            --signup-gradient: linear-gradient(135deg, #950740, #6f2232);
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+            backdrop-filter: blur(8px);
+        }
+
+        .logo {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            width: 100%;
+            height: 500px;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-front {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-back {
+            background: rgba(255, 255, 255, 0.95);
+            transform: rotateY(180deg);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4e4e50;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.5rem;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .form-group input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(149, 7, 64, 0.1);
+            background-color: #fff;
+            outline: none;
+        }
+
+        .form-group input:focus + i {
+            color: var(--secondary-color);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remember-me input {
+            accent-color: var(--secondary-color);
+        }
+
+        .forgot-password {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
+        }
+
+        .primary-btn:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(149, 7, 64, 0.4);
+        }
+
+        .social-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .social-text {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .social-text::before,
+        .social-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: #e1e1e1;
+        }
+
+        .social-text::before {
+            left: 0;
+        }
+
+        .social-text::after {
+            right: 0;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            color: #444;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .facebook:hover {
+            background-color: #4267B2;
+            color: white;
+        }
+
+        .google:hover {
+            background-color: #DB4437;
+            color: white;
+        }
+
+        .apple:hover {
+            background-color: #000;
+            color: white;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 500px) {
+            .card-container {
+                max-width: 90%;
+            }
+            
+            .toggle-buttons {
+                margin-top: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-front > *, .card-back > * {
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        /* Error message style */
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-group.error input {
+            border-color: var(--error-color);
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+
+    <div class="logo">
+        <h1>OnGrounds</h1>
+        <p>Connect. Collaborate. Explore.</p>
+    </div>
+    
+    <div class="card-container">
+        <div class="card">
+            <div class="card-front">
+                <h2>Welcome Back</h2>
+                <form action="/login" method="POST" class="auth-form" id="login-form">
+                    <div class="form-group">
+                        <input type="text" name="username" id="login-username" placeholder="Username" required>
+                        <i class="fas fa-user"></i>
+                        <div class="error-message">Please enter a valid username</div>
+                    </div>
+            <div class="form-group">
+                        <input type="password" name="password" id="login-password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                        <div class="error-message">Password must be at least 6 characters</div>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <label class="remember-me">
+                            <input type="checkbox" name="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn primary-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Log In
+                    </button>
+                </form>
+                
+                <div class="social-login">
+                    <p class="social-text">Or Log in with</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon google">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-back">
+                <h2>Create Account</h2>
+                <form action="/signup" method="POST" class="auth-form" id="signup-form">
+                    <div class="form-group">
+                        <input type="text" name="username" id="signup-username" placeholder="Username" required>
+                        <i class="fas fa-user"></i>
+                        <div class="error-message">Username must be 3-20 characters</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="signup-email" placeholder="Email" required>
+                        <i class="fas fa-envelope"></i>
+                        <div class="error-message">Please enter a valid email address</div>
+            </div>
+            <div class="form-group">
+                        <input type="password" name="password" id="signup-password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                        <div class="error-message">Password must be at least 6 characters</div>
+                    </div>
+                    
+                    <button type="submit" class="btn primary-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Sign Up
+                    </button>
+                </form>
+                
+                <div class="social-login">
+                    <p class="social-text">Or sign up with</p>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon google">
+                            <i class="fab fa-google"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toggle-buttons">
+        <button id="login-toggle" class="toggle-btn active">Login</button>
+        <button id="signup-toggle" class="toggle-btn">Signup</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.card');
+            const loginToggle = document.getElementById('login-toggle');
+            const signupToggle = document.getElementById('signup-toggle');
+            
+            // Toggle between login and signup
+            loginToggle.addEventListener('click', function() {
+                card.classList.remove('flipped');
+                loginToggle.classList.add('active');
+                signupToggle.classList.remove('active');
+            });
+            
+            signupToggle.addEventListener('click', function() {
+                card.classList.add('flipped');
+                signupToggle.classList.add('active');
+                loginToggle.classList.remove('active');
+            });
+            
+            // Form validation
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                
+                let isValid = true;
+                
+                if (username.length < 3) {
+                    document.getElementById('login-username').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('login-username').parentElement.classList.remove('error');
+                }
+                
+                if (password.length < 6) {
+                    document.getElementById('login-password').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('login-password').parentElement.classList.remove('error');
+                }
+                
+                if (isValid) {
+                    try {
+                        const response = await fetch('/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ username, password })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            window.location.href = data.redirect;
+                        } else {
+                            toastr.error(data.error || 'Login failed');
+                        }
+                    } catch (error) {
+                        console.error('Error during login:', error);
+                        toastr.error('An error occurred. Please try again.');
+                    }
+                }
+            });
+            
+            signupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const username = document.getElementById('signup-username').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                
+                let isValid = true;
+                
+                if (username.length < 3 || username.length > 20) {
+                    document.getElementById('signup-username').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('signup-username').parentElement.classList.remove('error');
+                }
+                
+                if (!validateEmail(email)) {
+                    document.getElementById('signup-email').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('signup-email').parentElement.classList.remove('error');
+                }
+                
+                if (password.length < 6) {
+                    document.getElementById('signup-password').parentElement.classList.add('error');
+                    isValid = false;
+                } else {
+                    document.getElementById('signup-password').parentElement.classList.remove('error');
+                }
+                
+                if (isValid) {
+                    try {
+                        const response = await fetch('/signup', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ username, email, password })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            window.location.href = data.redirect;
+                        } else {
+                            toastr.error(data.error || 'Signup failed');
+                        }
+                    } catch (error) {
+                        console.error('Error during signup:', error);
+                        toastr.error('An error occurred. Please try again.');
+                    }
+                }
+            });
+            
+            // Simple email validation
+            function validateEmail(email) {
+                const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
+            }
+            
+            // Password visibility toggle
+            const togglePassword = function(passwordField) {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+            };
+
+            // Auto toggle based on URL path
+const path = window.location.pathname;
+if (path === '/signup') {
+    card.classList.add('flipped');
+    signupToggle.classList.add('active');
+    loginToggle.classList.remove('active');
+} else {
+    card.classList.remove('flipped');
+    loginToggle.classList.add('active');
+    signupToggle.classList.remove('active');
+}
+
+        }
+    );
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.querySelector('form.auth-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    try {
+                        const formData = new FormData(loginForm);
+                        const isSignup = loginForm.querySelector('[name="email"]') !== null;
+                        
+                        const endpoint = isSignup ? '/signup' : '/login';
+                        const formBody = isSignup ? {
+                            username: formData.get('username'),
+                            email: formData.get('email'),
+                            password: formData.get('password')
+                        } : {
+                            username: formData.get('username'),
+                            password: formData.get('password')
+                        };
+
+                        const response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(formBody)
+                        });
+
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            window.location.href = data.redirect;
+                        } else {
+                            toastr.error(data.error || `${isSignup ? 'Signup' : 'Login'} failed`);
+                        }
+                    } catch (error) {
+                        toastr.error('An unexpected error occurred. Please try again.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

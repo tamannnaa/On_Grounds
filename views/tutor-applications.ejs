@@ -6,22 +6,29 @@
     <title>Tutor Applications - OnGrounds</title>
     <style>
         :root {
-            --primary-color: #331B3F;
-            --secondary-color: #ACC7B4;
-            --hover-color: #4a2959;
-            --text-light: #ffffff;
-            --text-dark: #2c3e50;
-            --bg-light: #f5f5f5;
-            --border-color: rgba(172, 199, 180, 0.3);
-            --card-shadow: 0 4px 16px rgba(51, 27, 63, 0.1);
+            --primary-color: #1a1a1d;
+    --secondary-color: #950740;
+    --accent-color: #c5c6c7;
+    --text-color: #4e4e50;
+    --background-color: #f0f0f0;
+    --error-color: #ff4444;
+    --button-hover-color: #6f2232;
+    --button-color: #4e4e50;
+    --button-text: #ffffff;
+    --login-gradient: linear-gradient(135deg, #1a1a1d, #4e4e50);
+    --signup-gradient: linear-gradient(135deg, #950740, #6f2232);
+    --font-family: 'Poppins', sans-serif;
         }
 
         body {
-            margin: 0;
+            margin-top:132rem;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background-color: var(--bg-light);
+            background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
             color: var(--text-dark);
+            overflow-y: auto;
+            margin-top:210rem;
         }
 
         .container {
@@ -36,11 +43,11 @@
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid black;
         }
 
         .page-title {
-            color: var(--primary-color);
+            color: black;
             margin: 0;
             font-size: 1.8rem;
         }
@@ -224,38 +231,45 @@
 
         .btn-primary {
             background-color: var(--primary-color);
-            color: var(--text-light);
+            color: var(--accent-color);
         }
 
         .btn-secondary {
             background-color: var(--secondary-color);
-            color: var(--primary-color);
+            color: var(--accent-color);
         }
 
         .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    display: flex; /* Flexbox to ensure content is centered */
+    align-items: center;
+    justify-content: center;
+}
 
         .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: relative;
-        }
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: absolute;  /* change from relative to absolute */
+    top: 50%;  /* Move it to the center of the page vertically */
+    left: 50%;  /* Center horizontally */
+    transform: translate(-50%, -50%); /* Correct positioning */
+}
+
 
         .modal h2 {
             color: var(--primary-color);
@@ -342,7 +356,7 @@
         }
 
         .back-link {
-            color: var(--primary-color);
+            color: var(--secondary-color);
             text-decoration: none;
             display: inline-flex;
             align-items: center;

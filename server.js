@@ -27,7 +27,7 @@ app.use(session({
     resave: true,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: 'mongodb://localhost:27017/ongrounds',
+        mongoUrl: 'mongodb+srv://nayan:jaihind1480@cluster0.2skqcsw.mongodb.net/ongrounds?retryWrites=true&w=majority',
         ttl: 24 * 60 * 60, 
         autoRemove: 'native'
     }),

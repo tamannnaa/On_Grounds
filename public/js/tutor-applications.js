@@ -49,7 +49,7 @@ let currentApplicationId = null;
             document.getElementById('rejectionReason').value = '';
             document.getElementById('rejectionReasonContainer').style.display = 'none';
         }
-
+        
         function closeReviewModal() {
             document.getElementById('reviewModal').style.display = 'none';
             currentApplicationId = null;

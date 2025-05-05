@@ -34,9 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
         countrySelect.addEventListener('change', updateCityDropdown);
     }
     
-    if (settingsForm) {
-        settingsForm.addEventListener('submit', handleFormSubmit);
-    }
+    // if (settingsForm) {
+    //     settingsForm.addEventListener('submit', handleFormSubmit);
+    // }
 
     if (countrySelect && citySelect) {
         updateCityDropdown();
@@ -84,37 +84,37 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function handleFormSubmit(event) {
-        event.preventDefault();
+    // function handleFormSubmit(event) {
+    //     event.preventDefault();
         
-        const searchParams = new URLSearchParams();
+    //     const searchParams = new URLSearchParams();
         
-        if (countrySelect && citySelect) {
-            const location = citySelect.value ? 
-                `${citySelect.value}, ${countrySelect.value}` : 
-                countrySelect.value;
+    //     if (countrySelect && citySelect) {
+    //         const location = citySelect.value ? 
+    //             `${citySelect.value}, ${countrySelect.value}` : 
+    //             countrySelect.value;
             
-            if (location) {
-                searchParams.append('location', location);
-            }
-        }
+    //         if (location) {
+    //             searchParams.append('location', location);
+    //         }
+    //     }
 
-        const priceRange = document.getElementById('priceRange');
-        if (priceRange && priceRange.value) {
-            const [min, max] = priceRange.value.split('-');
-            if (min) searchParams.append('minPrice', min);
-            if (max) searchParams.append('maxPrice', max);
-        }
+    //     const priceRange = document.getElementById('priceRange');
+    //     if (priceRange && priceRange.value) {
+    //         const [min, max] = priceRange.value.split('-');
+    //         if (min) searchParams.append('minPrice', min);
+    //         if (max) searchParams.append('maxPrice', max);
+    //     }
 
-        if (timeSlotsSelect && timeSlotsSelect.value) {
-            searchParams.append('timeSlot', timeSlotsSelect.value);
-        }
+    //     if (timeSlotsSelect && timeSlotsSelect.value) {
+    //         searchParams.append('timeSlot', timeSlotsSelect.value);
+    //     }
 
-        const availableDays = document.getElementById('availableDays');
-        if (availableDays && availableDays.value) {
-            searchParams.append('availableDays', availableDays.value);
-        }
+    //     const availableDays = document.getElementById('availableDays');
+    //     if (availableDays && availableDays.value) {
+    //         searchParams.append('availableDays', availableDays.value);
+    //     }
 
-        window.location.href = '/search-tutors?' + searchParams.toString();
-    }
+    //     window.location.href = '/search-tutors?' + searchParams.toString();
+    // }
 }); 

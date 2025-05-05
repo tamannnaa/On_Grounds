@@ -38,4 +38,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const loginToggle = document.getElementById('login-toggle');
+    const signupToggle = document.getElementById('signup-toggle');
+    const panelContainer = document.querySelector('.panel-container');
+
+    loginToggle.addEventListener('click', function() {
+        panelContainer.style.transform = 'translateX(0)';
+        loginToggle.classList.add('active');
+        signupToggle.classList.remove('active');
+    });
+
+    signupToggle.addEventListener('click', function() {
+        panelContainer.style.transform = 'translateX(-50%)';
+        signupToggle.classList.add('active');
+        loginToggle.classList.remove('active');
+    });
+
+    // Ensure the correct panel is visible on page load
+    if (window.location.pathname.includes('signup')) {
+        panelContainer.style.transform = 'translateX(-50%)';
+        signupToggle.classList.add('active');
+        loginToggle.classList.remove('active');
+    }
 }); 

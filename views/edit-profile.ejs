@@ -8,6 +8,24 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
     <style>
+        body{
+            /* overflow-y: auto;
+            overflow-x: hidden; */
+            overflow: scroll;
+            margin-top:15rem;
+            background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .backtoprofile{
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
+        }
+        .backtoprofile:hover{
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
+        }
         .form-section {
             transition: all 0.3s ease;
         }
@@ -63,11 +81,12 @@
             border-radius: 4px;
         }
         .tab-button {
+            color: #000000;
             transition: all 0.3s ease;
         }
         .tab-button.active {
-            border-bottom: 2px solid #3b82f6;
-            color: #3b82f6;
+            border-bottom: 2px solid #000000;
+            color: #000000;
         }
         .profile-image-fallback {
             width: 100%;
@@ -79,13 +98,14 @@
             color: #999;
             font-size: 2em;
         }
+        
     </style>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Edit Mentor Profile</h1>
-            <a href="/my-profile" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded flex items-center">
+            <h1 class="text-3xl font-bold text-black">Edit Mentor Profile</h1>
+            <a href="/mentor/my-profile" class="backtoprofile  text-white font-medium py-2 px-4 rounded flex items-center">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Profile
             </a>
         </div>
@@ -102,7 +122,7 @@
             </div>
         <% } %>
 
-        <div class="flex border-b border-gray-200 mb-6">
+        <div class="flex border-b border-black mb-6">
             <button class="tab-button px-4 py-2 font-medium text-gray-700 active" data-tab="basicInfo">Basic Info</button>
             <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="languages">Languages</button>
             <button class="tab-button px-4 py-2 font-medium text-gray-700" data-tab="pricing">Pricing & Availability</button>

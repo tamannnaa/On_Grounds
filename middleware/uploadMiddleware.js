@@ -33,16 +33,32 @@ const profilePhotoStorage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const fileExt = path.extname(file.originalname).toLowerCase();
+  const mimeType = file.mimetype;
 
-  if (extname && mimetype) {
-    return cb(null, true);
+  console.log('Uploading file:', file.originalname);
+  console.log('Extension:', fileExt);
+  console.log('MIME type:', mimeType);
+
+  const extAllowed = ['.jpeg', '.jpg', '.png', '.gif', '.pdf', '.doc', '.docx'];
+  const mimeAllowed = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ];
+
+  if (extAllowed.includes(fileExt) && mimeAllowed.includes(mimeType)) {
+    cb(null, true);
   } else {
-    cb(new Error('Only image, PDF, and document files are allowed!'));
+    cb(new Error(`Only image, PDF, and document files are allowed!`));
   }
 };
+
+
 
 const documentUpload = multer({
   storage: multer.diskStorage({

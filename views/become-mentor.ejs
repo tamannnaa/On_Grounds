@@ -8,291 +8,313 @@
     <link rel="stylesheet" href="/css/mentor-form.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .application-status {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 20px;
-            font-weight: 600;
-            z-index: 1000;
-            display: none;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .status-pending {
-            background-color: rgba(51, 27, 63, 0.1);
-            color: #331B3F;
-            border: 1px solid #331B3F;
-        }
-
-        .status-approved {
-            background-color: rgba(172, 199, 180, 0.2);
-            color: #2d5a27;
-            border: 1px solid #2d5a27;
-        }
-
-        .status-rejected {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: #c0392b;
-            border: 1px solid #c0392b;
-        }
-
-        .rejection-message {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: rgba(231, 76, 60, 0.1);
-            border-radius: 8px;
-            color: #c0392b;
-            display: none;
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
         :root {
-            --primary-color: #331B3F;
-            --secondary-color: #ACC7B4;
-        }
+    --primary-color: #1a1a1d;
+    --secondary-color: #950740;
+    --accent-color: #c5c6c7;
+    --text-color: #4e4e50;
+    --background-color: #f0f0f0;
+    --error-color: #ff4444;
+    --button-hover-color: #6f2232;
+    --button-color: #4e4e50;
+    --button-text: #ffffff;
+    --login-gradient: linear-gradient(135deg, #1a1a1d, #4e4e50);
+    --signup-gradient: linear-gradient(135deg, #950740, #6f2232);
+    --font-family: 'Poppins', sans-serif;
+}
 
-        .mentor-form button {
-            background-color: var(--primary-color);
-        }
+body {
+    margin: 0;
+    padding-top: 90px;
+    font-family: var(--font-family);
+    background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--text-color);
+    overflow-y: auto;
+}
 
-        .mentor-form button:hover {
-            background-color: #4a2959;
-        }
+.nav-bar {
+    background-color: var(--primary-color);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
 
-        .status-toggle .status-btn.active {
-            background-color: var(--primary-color);
-        }
 
-        .document-upload-label {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            width: 100%;
-            text-align: center;
-        }
+.nav-brand {
+    color: white;
+    font-size: 1.6rem;
+    font-weight: 600;
+    text-decoration: none;
+}
 
-        .document-upload-label i {
-            font-size: 24px;
-            margin-bottom: 4px;
-        }
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
 
-        .document-upload-label:hover {
-            background-color: #9bb5a3;
-            transform: translateY(-2px);
-        }
+.logout-btn {
+    background-color: var(--button-color);
+    color: var(--button-text);
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        .upload-hint {
-            font-size: 12px;
-            opacity: 0.8;
-            display: block;
-            margin-top: 4px;
-        }
+.logout-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+.mentor-form-container {
+    max-width: 800px;
+    margin: 148rem auto 2rem; 
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: auto;
+}
 
-        .document-preview {
-            width: 100%;
-            height: 150px;
-            border: 2px dashed var(--secondary-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            overflow: hidden;
-            background-color: #f8f9fa;
-            position: relative;
-        }
 
-        .document-preview i {
-            font-size: 48px;
-            color: var(--secondary-color);
-        }
+.mentor-form button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .document-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+.mentor-form button:hover {
+    background-color: var(--secondary-color);
+}
 
-        .document-upload-item {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+.status-toggle .status-btn.active {
+    background-color: var(--secondary-color);
+}
 
-        input[type="file"] {
-            display: none;
-        }
+.application-status {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    z-index: 1000;
+    display: none;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 
-        .file-name {
-            margin-top: 8px;
-            font-size: 14px;
-            color: var(--primary-color);
-            word-break: break-all;
-            max-width: 100%;
-        }
+.status-pending {
+    background-color: rgba(149, 7, 64, 0.05);
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+}
 
-        .upload-status {
-            margin-top: 8px;
-            font-size: 14px;
-            display: none;
-        }
+.status-approved {
+    background-color: rgba(197, 198, 199, 0.2);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
 
-        .upload-status.success {
-            color: #2d5a27;
-        }
+.status-rejected {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+}
 
-        .upload-status.error {
-            color: #c0392b;
-        }
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            font-size: 14px;
-        }
+.rejection-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 68, 68, 0.05);
+    border-radius: 8px;
+    color: var(--error-color);
+    display: none;
+    border: 1px solid rgba(255, 68, 68, 0.3);
+}
 
-        select:disabled {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
-        }
+.document-upload-label {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+}
 
-        .location-fields {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
+.document-upload-label i {
+    font-size: 24px;
+}
 
-        @media (max-width: 768px) {
-            .location-fields {
-                grid-template-columns: 1fr;
-            }
-        }
-        .language-entry {
-            margin-bottom: 10px;
-        }
+.document-upload-label:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.02);
+}
 
-        .language-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 10px;
-            align-items: center;
-        }
+.upload-hint {
+    font-size: 12px;
+    opacity: 0.8;
+    display: block;
+    margin-top: 4px;
+}
 
-        .language-select,
-        .proficiency-select {
-            width: 100%;
-            padding: 10px;
-        }
+.document-preview {
+    width: 100%;
+    height: 150px;
+    border: 2px dashed var(--accent-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
 
-        .remove-language {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+.document-preview i {
+    font-size: 48px;
+    color: var(--accent-color);
+}
 
-        .add-language {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-        }
+.document-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
-        .add-language:hover {
-            background-color: #4a2959;
-        }
+.language-entry {
+    margin-bottom: 1rem;
+}
 
-        .status-btn {
-            color: white;
-            background-color: #6c757d;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+.language-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+}
 
-        .status-btn.active {
-            background-color: var(--primary-color);
-            color: white;
-        }
+.language-select,
+.proficiency-select,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+}
 
-        .loan-section {
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
+select:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
 
-        .loan-toggle {
-            margin-bottom: 15px;
-        }
+.remove-language {
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-        .loan-details {
-            display: none;
-        }
+.add-language {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
 
-        .loan-details.visible {
-            display: block;
-        }
-        .nav-bar {
-            background-color: var(--primary-color);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+.add-language:hover {
+    background-color: var(--secondary-color);
+}
 
-        .nav-brand {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-decoration: none;
-        }
+.status-btn {
+    color: white;
+    background-color: var(--accent-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
+.status-btn.active {
+    background-color: var(--secondary-color);
+}
 
-        .logout-btn {
-            background-color: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+.loan-section {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+}
 
-        .logout-btn:hover {
-            background-color: #9bb5a3;
-            transform: translateY(-2px);
-        }
+.loan-toggle {
+    margin-bottom: 15px;
+}
+
+.loan-details {
+    display: none;
+}
+
+.loan-details.visible {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .location-fields {
+        grid-template-columns: 1fr;
+    }
+}
+.go-back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.go-back-link:hover {
+    color: var(--button-hover-color);
+    text-decoration: underline;
+}
+
+
     </style>
 </head>
 <body>
     <nav class="nav-bar">
-        <a href="/" class="nav-brand">OnGrounds</a>
+        <a href="/dashboard" class="nav-brand">OnGrounds</a>
         <div class="nav-links">
             <button id="logoutBtn" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -304,6 +326,9 @@
     <div id="rejectionMessage" class="rejection-message"></div>
 
     <div class="mentor-form-container">
+        <a href="/dashboard" class="go-back-link">
+            ← Go Back
+        </a>
         <h1 class="form-title">Become a Mentor</h1>
         <p class="form-subtitle">Share your knowledge and inspire others</p>
 
@@ -319,7 +344,8 @@
             <div class="form-section">
                 <div class="photo-upload-section">
                     <div class="photo-preview">
-                        <img id="profilePhotoPreview" src="/images/default-avatar.png" alt="Profile Photo">
+                        <!-- <img id="profilePhotoPreview" src="/images/default-avatar.png" alt="Profile Photo">-->
+                         <i class="fas fa-user-circle"></i> 
                     </div>
                     <div class="photo-upload-controls">
                         <label for="profilePhoto" class="upload-btn">
@@ -397,6 +423,21 @@
 
                 <div class="form-group pricing-section">
                     <label>Session Pricing</label>
+                    <div class="currency-selector">
+                        <label for="currency">Currency:</label>
+                        <select id="currency" name="currency">
+                            <option value="India" selected>India (₹)</option>
+                            <option value="United States">United States ($)</option>
+                            <option value="United Kingdom">United Kingdom (£)</option>
+                            <option value="Canada">Canada ($)</option>
+                            <option value="Australia">Australia ($)</option>
+                            <option value="Germany">Germany (€)</option>
+                            <option value="France">France (€)</option>
+                            <option value="Japan">Japan (¥)</option>
+                            <option value="Singapore">Singapore ($)</option>
+                            <option value="UAE">UAE (د.إ)</option>
+                        </select>
+                    </div>
                     <div class="price-inputs">
                         <div class="price-input-group">
                             <label for="price30">30 mins</label>

@@ -19,7 +19,7 @@ router.get('/api/session-status',getSessionStatus);
 router.get('/', getHomePage);
 router.get('/dashboard', isAuthenticated,getDashboard);
 router.get('/become-mentor', isAuthenticated,getBecomeMentorPage);
-router.get('/search-tutors', searchTutors);
+router.post('/search-tutors', searchTutors);
 router.post('/api/mentor/register', isAuthenticated,registerMentor);
 
 router.use(logRequests);

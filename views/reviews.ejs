@@ -171,6 +171,12 @@
         .text-muted {
             color: #6c757d;
         }
+        .cardd{
+            border:2px solid black;
+            border-radius: 2rem;
+            padding:20px;
+            margin:5px;
+        }
     </style>
 </head>
 <body>
@@ -179,7 +185,13 @@
         <div id="success-message" class="success-message">
             Your review has been submitted successfully!
         </div>
+        <div id="error-message" class="success-message" style="background-color: #f8d7da; color: #721c24;">
+            Error in submitting the review
+        </div>
+        
         <form id="review-form" action="/mentor/<%= tutor._id %>/reviews" method="post">
+            <input type="hidden" id="mentorId" value="<%= tutor._id %>">
+
             <div class="form-group">
                 <label for="userName">Your Name</label>
                 <input type="text" class="form-control" id="userName" name="userName" required>
@@ -208,11 +220,12 @@
     </div>
 
     <div class="reviews-section">
-        <h3 class="section-title">Student Reviews</h3>
+        <div class="review-card">
+        <h3 class="section-title ">Student Reviews</h3>
         <% reviews.forEach(review => { %>
-            <div class="review-card">
+            <div class="cardd">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 fw-bold"><%= review.student.username %></h5>
+                    <h5 class="mb-0 fw-bold">@ <%= review.student.username %></h5>
                     <div class="star-rating">
                         <% for(let i = 0; i < review.rating; i++) { %>
                             <i class="fas fa-star"></i>
@@ -231,6 +244,7 @@
             </div>
         <% }) %>
     </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
@@ -244,7 +258,7 @@
                     
                     const mentorId = document.getElementById('mentorId').value;
                     const rating = document.querySelector('input[name="rating"]:checked').value;
-                    const content = document.getElementById('content').value;
+                    const content = document.getElementById('ccontent').value;
                     console.log("mentor id:"+mentorId);
                     try {
                         const response = await fetch(`/mentor/${mentorId}/reviews`, {

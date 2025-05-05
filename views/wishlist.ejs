@@ -9,26 +9,63 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/favicon.png">
     <style>
-        .wishlist-container {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-        .tutor-card {
-            position: relative;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            padding: 20px;
-            transition: transform 0.2s;
-            background: white;
-        }
+.wishlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    text-align: center;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.tutor-card {
+    background-color: white;
+    width: 100%;
+    max-width: 1000px;
+    padding:25px;
+    margin:10px;
+    border-radius: 20px;
+
+}
+
 
         .tutor-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+
+        .tutor-card .d-flex {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .tutor-card .d-flex {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+    }
+}
+.empty-wishlist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
 
         .profile-image-container {
             width: 120px;
@@ -59,8 +96,15 @@
         }
 
         .tutor-info {
-            flex: 1;
-        }
+    margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+    .tutor-info {
+        margin-top: 0;
+    }
+}
+
 
         .tutor-name {
             font-size: 1.5em;
@@ -116,12 +160,12 @@
 
         .language-tag {
             display: inline-block;
-            background-color: var(--secondary-color);
-            padding: 4px 10px;
+            background-color: var(--accent-color);
+            color: black;
+            padding: 6px 14px;
             border-radius: 15px;
             margin: 2px;
             font-size: 0.9em;
-            color: var(--primary-color);
         }
 
         .price-tag {
@@ -153,8 +197,8 @@
 
         .badge-professional {
             background: var(--secondary-color);
-            color: var(--primary-color);
-            padding: 4px 10px;
+            color: white;
+            padding: 6px 14px;
             border-radius: 15px;
             font-size: 0.8em;
         }
@@ -185,11 +229,6 @@
             cursor: pointer;
         }
 
-        .empty-wishlist {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-        }
 
         .empty-wishlist i {
             font-size: 3rem;
@@ -332,7 +371,7 @@
                             </div>
 
                             <div class="action-buttons">
-                                <a href="/tutor/<%= tutor._id %>" class="btn btn-outline-primary">View Full Profile</a>
+                                <a href="/<%= tutor._id %>" class="btn btn-outline-primary">View Full Profile</a>
                                 <a href="/chat/<%= tutor._id %>" class="btn btn-outline-success">Send Message</a>
                                 <button class="btn btn-primary">Book Lesson</button>
                                 <button class="btn btn-danger" onclick="removeFromWishlist('<%= tutor._id %>')">

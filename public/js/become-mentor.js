@@ -44,6 +44,33 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    const currencies = {
+        "India": "₹", 
+        "United States": "$",
+        "United Kingdom": "£", 
+        "Canada": "$", 
+        "Australia": "$", 
+        "Germany": "€", 
+        "France": "€", 
+        "Japan": "¥", 
+        "Singapore": "$", 
+        "UAE": "د.إ" 
+    };
+
+    // Event listener for currency change
+    document.getElementById('currency').addEventListener('change', function () {
+        // Get the selected country
+        const selectedCountry = this.value;
+        
+        // Get the currency symbol for the selected country
+        const selectedCurrency = currencies[selectedCountry];
+        
+        // Update the currency symbol in the price fields
+        document.querySelectorAll('.price-field .currency').forEach(span => {
+            span.textContent = selectedCurrency;
+        });
+    });
 document.getElementById('mentorForm').addEventListener('submit', async (e) => {
 e.preventDefault();
 const submitBtn = document.getElementById('submitBtn');
@@ -403,4 +430,26 @@ document.querySelector('form').addEventListener('submit', function(e) {
 });
 document.getElementById('logoutBtn').addEventListener('click', function() {
     window.location.href = '/logout';
+});
+// Select buttons
+const studentBtn = document.querySelector('.status-btn[data-status="student"]');
+const professionalBtn = document.querySelector('.status-btn[data-status="professional"]');
+
+// Select the sections
+const collegeSection = document.getElementById('collegeSection');
+const workingSection = document.getElementById('workingSection');
+
+// Event listeners for status buttons
+studentBtn.addEventListener('click', function() {
+    studentBtn.classList.add('active');
+    professionalBtn.classList.remove('active');
+    collegeSection.style.display = 'block';
+    workingSection.style.display = 'none';
+});
+
+professionalBtn.addEventListener('click', function() {
+    professionalBtn.classList.add('active');
+    studentBtn.classList.remove('active');
+    collegeSection.style.display = 'none';
+    workingSection.style.display = 'block';
 });

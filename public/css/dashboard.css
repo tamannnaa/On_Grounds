@@ -1,3 +1,19 @@
+:root {
+    --welcome-banner-height: 40px; /* adjust as needed */
+    --navbar-height: 70px; 
+    --primary-color: #1a1a1d;
+    --secondary-color: #950740;
+    --accent-color: #c5c6c7;
+    --text-color: #4e4e50;
+    --background-color: #f0f0f0;
+    --error-color: #ff4444;
+    --button-hover-color: #950740;
+    --login-gradient: linear-gradient(135deg, #1a1a1d, #4e4e50);
+    --signup-gradient: linear-gradient(135deg, #950740, #6f2232);
+    --font-family: 'Poppins', sans-serif;
+}
+  
+
 /* Welcome Banner */
 .welcome-banner {
     background-color: var(--primary-color);
@@ -9,7 +25,37 @@
     left: 0;
     right: 0;
     z-index: 1001;
+    overflow-y: auto;
 }
+html {
+    height: 100%;
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+body {
+    height: 100%;
+    font-family: var(--font-family);
+    margin: 0;
+    padding-top:46rem;
+    overflow-x: hidden;
+    background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+    overflow-y: auto;
+}
+
+.dashboard-content {
+    margin-top: calc(var(--welcome-banner-height) + var(--navbar-height)); /* Offset both banner and navbar */
+    padding: 2rem;
+    overflow-y: auto;
+    min-height: calc(100vh - (var(--welcome-banner-height) + var(--navbar-height))); 
+    
+   
+}
+
 
 .welcome-banner span {
     font-weight: 500;
@@ -28,6 +74,7 @@
     left: 0;
     right: 0;
     z-index: 1000;
+    border-bottom: 2px solid var(--accent-color);
 }
 
 .nav-left {
@@ -45,11 +92,15 @@
     font-size: 1.5rem;
     color: var(--primary-color);
     font-weight: bold;
+    
 }
 
 .nav-center {
     display: flex;
     align-items: center;
+}
+.navbar a {
+    font-family: 'Playfair Display', serif !important;
 }
 
 .mentor-btn {
@@ -57,8 +108,9 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.8rem 1.5rem;
-    background-color: var(--accent-color);
-    color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -68,8 +120,9 @@
 }
 
 .mentor-btn:hover {
-    background-color: #9bb5a3;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(149, 7, 64, 0.4);
 }
 
 .mentor-btn i {
@@ -88,8 +141,9 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: var(--primary-color);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -97,8 +151,9 @@
 }
 
 .refer-btn:hover {
-    background-color: #2a1733;
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(149, 7, 64, 0.4);
 }
 
 /* Dropdown Styles */
@@ -115,7 +170,11 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-color);
+    color:linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+.dropdown-btn:hover{
+    transform:translateY(-2px);
+    color: var(--button-hover-color);
 }
 
 .dropdown-content {
@@ -174,20 +233,21 @@ select:focus {
     display: flex;
     align-items: center;
     gap: 1rem;
+    color: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
 }
 
 .icon-btn {
     background: none;
     border: none;
     font-size: 1.25rem;
-    color: var(--text-color);
+    color: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     cursor: pointer;
     padding: 0.5rem;
     transition: color 0.2s;
 }
 
 .icon-btn:hover {
-    color: var(--primary-color);
+    color: var(--button-hover-color);
 }
 
 /* Profile Dropdown */
@@ -212,7 +272,7 @@ select:focus {
 }
 
 .profile-btn:hover i {
-    color: var(--accent-color);
+    color: var(--button-hover-color);
 }
 
 .profile-img {
@@ -271,17 +331,13 @@ select:focus {
     background-color: #f5f5f5;
 }
 
-/* Welcome Section */
-.dashboard-content {
-    margin-top: 80px;
-    padding: 2rem;
-}
+
 
 .welcome-section {
     text-align: left;
     padding: 2rem 0;
     margin-bottom: 2rem;
-    border-bottom: 2px solid var(--accent-color);
+    border-bottom: 2px solid black;
 }
 
 .welcome-heading {
@@ -305,11 +361,11 @@ select:focus {
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 2rem;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-top: 2rem;  /* Increased width */
+    width: 80rem;
+    
 }
+
 
 .section-title {
     color: var(--primary-color);
@@ -398,7 +454,9 @@ option {
     height: 48px;
     margin-top: 1.5rem;
     padding: 0.875rem;
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
     color: white;
     border: none;
     border-radius: 5px;
@@ -409,9 +467,9 @@ option {
 }
 
 .save-settings-btn:hover {
-    background-color: #2a1733;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(66, 35, 81, 0.2);
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    color: white;
+    box-shadow: 0 4px 15px rgba(149, 7, 64, 0.3);
 }
 
 /* Multiple Select Styling */
@@ -478,3 +536,4 @@ select[multiple]::-webkit-scrollbar-thumb:hover {
         transform: translateY(0);
     }
 } 
+

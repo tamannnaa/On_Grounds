@@ -2,6 +2,8 @@ const Mentor = require('../models/mentor');
 const Booking = require('../models/booking');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const path = require('path');
+
 const { sendOTPEmail } = require('../utils/emailService');
 const { documentUpload } = require('../middleware/uploadMiddleware');
 const getMentorAvailability = async (req, res) => {
@@ -155,49 +157,153 @@ const bookSlot = async (req, res) => {
 
 const searchTutors = async (req, res) => {
     try {
-        console.log('Search parameters:', req.query);
-        const { location, minPrice, maxPrice, hasLoan } = req.query;
+        console.log('Search parameters:', req.body);
+        
+        // Check if form was submitted without any filters
+        const noFiltersApplied = !Object.values(req.body).some(value => value && value.trim() !== '');
+        
+        const { 
+            usernameSearch, 
+            countryOfBirth, 
+            country, 
+            city, 
+            timeSlots, 
+            availableDays, 
+            priceRange, 
+            hasLoan 
+        } = req.body;
+
+        // Base query for approved mentors
         let query = { applicationStatus: 'APPROVED' };
+        
+        // Get current user if logged in
         let user = null;
         if (req.session.userId) {
             user = await User.findById(req.session.userId);
         }
-        if (location) {
-            const locationTerms = location.split(',').map(term => term.trim());
-            const locationRegexes = locationTerms.map(term => new RegExp(term, 'i'));
+
+        // Handle username search - now searches directly on mentor's name field
+        if (usernameSearch && usernameSearch.trim() !== '') {
+            query.name = new RegExp(usernameSearch.trim(), 'i');
+        }
+
+        // Handle country of birth filter
+        if (countryOfBirth && countryOfBirth.trim() !== '') {
+            query.countryOfBirth = countryOfBirth;
+        }
+
+        // Handle current location (country and city)
+        if (country && country.trim() !== '') {
+            query.currentCountry = country;
             
-            query.$or = [
-                { currentCountry: { $in: locationRegexes } },
-                { currentCity: { $in: locationRegexes } }
-            ];
+            if (city && city.trim() !== '') {
+                query.currentCity = city;
+            }
         }
-        if (hasLoan !== undefined) {
-            query.hasLoan = hasLoan === 'true';
+
+        // Handle time slots filter - match the schema's structure
+        if (timeSlots && timeSlots.trim() !== '') {
+            query['timeSlots.time'] = timeSlots;
         }
-        let tutors = await Mentor.find(query);
+
+        // Handle available days filter - using the correct field name from schema
+        if (availableDays && availableDays.trim() !== '') {
+            // Convert short day name to full day name if needed
+            const dayMap = {
+                'Mon': 'Monday',
+                'Tue': 'Tuesday',
+                'Wed': 'Wednesday',
+                'Thu': 'Thursday',
+                'Fri': 'Friday',
+                'Sat': 'Saturday',
+                'Sun': 'Sunday'
+            };
+            
+            const fullDayName = dayMap[availableDays] || availableDays;
+            query.days = { $elemMatch: { $eq: fullDayName } };
+        }
+
+        // Handle loan status
+        if (hasLoan && hasLoan.trim() !== '') {
+            query.hasLoan = hasLoan === 'yes';
+        }
+
+        // Extract price range values
+        let minPrice = null;
+        let maxPrice = null;
+        
+        if (priceRange && priceRange.trim() !== '') {
+            if (priceRange === '5000+') {
+                minPrice = 5000;
+            } else {
+                const [min, max] = priceRange.split('-').map(price => parseInt(price));
+                minPrice = min;
+                maxPrice = max;
+            }
+        }
+
+        // Fetch tutors based on query and populate user data
+        let tutors = await Mentor.find(query).populate('user', 'username email');
+
+        // Calculate match percentage and filter by price if needed
         tutors = tutors.map(tutor => {
             const tutorObj = tutor.toObject();
-            const match = calculateMatchPercentage(tutorObj, {
-                location,
-                minPrice: minPrice ? parseFloat(minPrice) : null,
-                maxPrice: maxPrice ? parseFloat(maxPrice) : null,
-                hasLoan: hasLoan === 'true'
-            });
             
+            // If no filters were applied, give all mentors 100% match
+            if (noFiltersApplied) {
+                return {
+                    ...tutorObj,
+                    matchPercentage: 100,
+                    matchingCriteria: ['All Mentors']
+                };
+            }
+            
+            // Additional price filtering (since price might need hourly calculation)
+            if (minPrice !== null || maxPrice !== null) {
+                const tutorMinPrice = Math.min(tutor.price30 / 30 * 60, tutor.price60);
+                
+                // Skip this tutor if price doesn't match
+                if ((minPrice !== null && tutorMinPrice < minPrice) || 
+                    (maxPrice !== null && tutorMinPrice > maxPrice)) {
+                    return null;
+                }
+            }
+            
+            // Calculate match percentage only if filters were applied
+            const match = noFiltersApplied ? { percentage: 100, matchingCriteria: ['All Mentors'] } : 
+                calculateMatchPercentage(tutorObj, {
+                    usernameSearch,
+                    countryOfBirth,
+                    country,
+                    city,
+                    timeSlots,
+                    availableDays,
+                    minPrice,
+                    maxPrice,
+                    hasLoan: hasLoan === 'yes'
+                });
+
             return {
                 ...tutorObj,
                 matchPercentage: match.percentage,
                 matchingCriteria: match.matchingCriteria
             };
-        });
+        }).filter(tutor => tutor !== null); // Remove null entries (price filtered out)
+
+        // Sort by match percentage
         tutors.sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+        // Check if current user is a mentor
         const mentor = await Mentor.findOne({ user: req.session.userId });
-        const isMentor = !!mentor; 
+        const isMentor = !!mentor;
+        
+        // Render search results
         res.render('search-results', {
             tutors,
             user,
             isMentor,
-            userId: req.session.userId
+            userId: req.session.userId,
+            searchParams: req.body // Pass the search parameters back to the view
         });
 
     } catch (error) {
@@ -216,40 +322,87 @@ const calculateMatchPercentage = (tutor, criteria) => {
     let totalPoints = 0;
     let matchingCriteria = [];
 
-    if (criteria.location) {
-        totalPoints += 2; 
-        const [searchCity, searchCountry] = criteria.location.split(',').map(part => part.trim().toLowerCase());
-        
-        if (searchCountry) {
-            if (tutor.currentCountry.toLowerCase() === searchCountry) {
-                matchPoints += 1;
-                matchingCriteria.push('Country Match');
-            }
-            if (searchCity && tutor.currentCity.toLowerCase() === searchCity) {
-                matchPoints += 1;
-                matchingCriteria.push('City Match');
-            }
-        } else {
-            const searchTerm = criteria.location.toLowerCase();
-            if (tutor.currentCountry.toLowerCase().includes(searchTerm) ||
-                tutor.currentCity.toLowerCase().includes(searchTerm)) {
-                matchPoints += 1;
-                matchingCriteria.push('Location Match');
-            }
-        }
-    }
-
-    if (criteria.minPrice || criteria.maxPrice) {
+    // Name search (was username search)
+    if (criteria.usernameSearch) {
         totalPoints += 1;
-        const tutorMinPrice = Math.min(tutor.price30 / 30 * 60, tutor.price60);
-        
-        if ((!criteria.minPrice || tutorMinPrice >= criteria.minPrice) &&
-            (!criteria.maxPrice || tutorMinPrice <= criteria.maxPrice)) {
+        if (tutor.name && new RegExp(criteria.usernameSearch, 'i').test(tutor.name)) {
             matchPoints += 1;
-            matchingCriteria.push('Price Match');
+            matchingCriteria.push('Name Match');
         }
     }
 
+    // Country of birth match
+    if (criteria.countryOfBirth) {
+        totalPoints += 1;
+        if (tutor.countryOfBirth === criteria.countryOfBirth) {
+            matchPoints += 1;
+            matchingCriteria.push('Country of Origin Match');
+        }
+    }
+
+    // Current location match
+    if (criteria.country) {
+        totalPoints += 1;
+        if (tutor.currentCountry === criteria.country) {
+            matchPoints += 1;
+            matchingCriteria.push('Country Match');
+            
+            // City match (only if country matches)
+            if (criteria.city) {
+                totalPoints += 1;
+                if (tutor.currentCity === criteria.city) {
+                    matchPoints += 1;
+                    matchingCriteria.push('City Match');
+                }
+            }
+        }
+    }
+
+    // Time slots match
+    if (criteria.timeSlots) {
+        totalPoints += 1;
+        if (tutor.timeSlots && tutor.timeSlots.some(slot => slot.time === criteria.timeSlots)) {
+            matchPoints += 1;
+            matchingCriteria.push('Time Slot Match');
+        }
+    }
+
+    // Available days match
+    if (criteria.availableDays) {
+        totalPoints += 1;
+        // Convert short day name to full day name if needed
+        const dayMap = {
+            'Mon': 'Monday',
+            'Tue': 'Tuesday',
+            'Wed': 'Wednesday',
+            'Thu': 'Thursday',
+            'Fri': 'Friday',
+            'Sat': 'Saturday',
+            'Sun': 'Sunday'
+        };
+        
+        const fullDayName = dayMap[criteria.availableDays] || criteria.availableDays;
+        
+        if (tutor.days && tutor.days.includes(fullDayName)) {
+            matchPoints += 1;
+            matchingCriteria.push('Day Availability Match');
+        }
+    }
+
+    // Price range match
+    if (criteria.minPrice !== null || criteria.maxPrice !== null) {
+        totalPoints += 1;
+        // Calculate tutor's hourly rate (minimum of the 30 min rate converted to hourly, or the actual hourly rate)
+        const tutorHourlyRate = Math.min(tutor.price30 / 30 * 60, tutor.price60);
+        
+        if ((!criteria.minPrice || tutorHourlyRate >= criteria.minPrice) &&
+            (!criteria.maxPrice || tutorHourlyRate <= criteria.maxPrice)) {
+            matchPoints += 1;
+            matchingCriteria.push('Price Range Match');
+        }
+    }
+
+    // Loan status match
     if (criteria.hasLoan !== undefined) {
         totalPoints += 1;
         if (tutor.hasLoan === criteria.hasLoan) {
@@ -258,8 +411,9 @@ const calculateMatchPercentage = (tutor, criteria) => {
         }
     }
 
+    // Calculate percentage
     const percentage = totalPoints > 0 ? Math.round((matchPoints / totalPoints) * 100) : 100;
-    
+
     return {
         percentage,
         matchingCriteria
@@ -267,11 +421,11 @@ const calculateMatchPercentage = (tutor, criteria) => {
 };
 
 const getSignupPage = (req, res) => {
-    res.render('signup', { layout: false });
+    res.render('loginsignup', { layout: false });
 };
 
 const getLoginPage = (req, res) => {
-    res.render('login', { layout: false });
+    res.render('loginsignup', { layout: false });
 };
 
 const getVerifyPage = (req, res) => {
@@ -389,16 +543,19 @@ const getDashboard = async (req, res) => {
             req.session.destroy();
             return res.redirect('/login');
         }
-        
-        const mentor = await Mentor.findOne({ user: req.session.userId });
-        const isMentor = !!mentor; 
-        
-        res.render('dashboard', { user, isMentor, layout: false });
+
+        const isMentor = await Mentor.exists({ user: req.session.userId });
+
+        // Fetch all approved mentors with associated user data
+        const mentors = await Mentor.find({ applicationStatus: 'APPROVED' }).populate('user');
+
+        res.render('dashboard', { user, isMentor, mentors, layout: false });
     } catch (error) {
         console.error('Dashboard error:', error);
         res.redirect('/login');
     }
 };
+
 
 const getBecomeMentorPage = (req, res) => {
     res.render('become-mentor', { layout: false });

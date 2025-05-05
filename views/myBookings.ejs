@@ -41,6 +41,49 @@
             font-size: 3rem;
             margin-bottom: 15px;
         }
+        .center-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.centered-row {
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.card-text {
+    font-size: 0.95rem;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    background-color: #f1f3f5;
+    border-radius: 12px;
+    padding: 50px 30px;
+    margin-top: 20px;
+}
+
+.empty-state h4 {
+    font-weight: 500;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+}
+
     </style>
 </head>
 <body>
@@ -61,10 +104,11 @@
         <div class="tab-content" id="bookingsTabContent">
             <div class="tab-pane fade show active" id="my-bookings" role="tabpanel">
                 <% if(userBookings && userBookings.length > 0) { %>
-                    <div class="row">
-                        <% userBookings.forEach(booking => { %>
-                            <div class="col-md-6">
-                                <div class="card booking-card">
+                    <div class="center-wrapper">
+                        <div class="centered-row">
+                            <% userBookings.forEach(booking => { %>
+                                <div class="col-md-6">
+                                    <div class="card booking-card">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start mb-3">
                                             <h5 class="card-title mb-0"><%= booking.subject %></h5>
@@ -115,6 +159,7 @@
                                 </div>
                             </div>
                         <% }) %>
+                    </div>
                     </div>
                 <% } else { %>
                     <div class="empty-state">

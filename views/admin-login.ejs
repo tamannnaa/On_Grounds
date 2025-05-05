@@ -1,181 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - OnGrounds</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <style>
-        :root {
-            --primary-color: #331B3F;
-            --secondary-color: #ACC7B4;
-            --hover-color: #4a2959;
-            --error-color: #e74c3c;
-            --text-light: #ffffff;
-            --text-dark: #2c3e50;
-            --bg-light: #f5f5f5;
-        }
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login - OnGrounds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+   
+  <style>
+    /* Root Variables */
+    :root {
+      --primary-color: #1a1a1d;
+      --secondary-color: #950740;
+      --accent-color: #c5c6c7;
+      --text-color: #4e4e50;
+      --background-color: #f0f0f0;
+      --error-color: #ff4444;
+      --button-hover-color: #950740;
+      --font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            background-color: var(--bg-light);
-            font-family: 'Arial', sans-serif;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            opacity: 0.1;
-            z-index: -1;
-        }
-
-        .admin-login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 2.5rem;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(51, 27, 63, 0.15);
-            border: 1px solid rgba(172, 199, 180, 0.3);
-        }
-
-        .admin-login-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .admin-login-header h1 {
-            color: var(--primary-color);
-            font-size: 2.2rem;
-            margin-bottom: 0.75rem;
+    body {
+      font-family: var(--font-family);
+      background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--text-color);
+    }
+    h1{
+        color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
-        }
-
-        .admin-login-header p {
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-
-        .admin-login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .form-group label {
-            font-weight: 500;
-            color: var(--primary-color);
-            font-size: 0.95rem;
-        }
-
-        .form-group input {
-            padding: 1rem;
-            border: 2px solid var(--secondary-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background-color: rgba(172, 199, 180, 0.1);
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(51, 27, 63, 0.1);
-            background-color: #fff;
-        }
-
-        .login-btn {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            padding: 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-btn:hover {
-            background-color: var(--hover-color);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(51, 27, 63, 0.2);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 6px rgba(51, 27, 63, 0.1);
-        }
-
-        .login-btn:disabled {
-            background-color: var(--secondary-color);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            padding: 0.75rem;
-            background-color: rgba(231, 76, 60, 0.1);
-            border-radius: 6px;
-            display: none;
-            border: 1px solid rgba(231, 76, 60, 0.2);
-        }
-
-        .loading {
-            display: none;
             text-align: center;
-            margin-top: 1rem;
+            position: relative;
+            padding-bottom: 0.75rem;
+    }
+    h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+}
+
+    .background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: -1;
+      backdrop-filter: blur(8px);
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .form-group input {
+      width: 90%;
+      padding: 0.9rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #e1e1e1;
+      background-color: #f9f9f9;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 3px rgba(149, 7, 64, 0.1);
+      background-color: #fff;
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1rem;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      box-shadow: 0 8px 25px rgba(149, 7, 64, 0.4);
+      transform: translateY(-3px);
+    }
+    @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .loading-spinner {
-            border: 3px solid rgba(51, 27, 63, 0.1);
-            border-top: 3px solid var(--primary-color);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+        .login-box> * {
+            animation: fadeIn 0.5s ease-in-out forwards;
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .form-group input {
-            transform: translateY(0);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .form-group input:focus {
-            transform: translateY(-2px);
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <div class="admin-login-container">
-        <div class="admin-login-header">
+    <div class="background-overlay"></div>
+
+  <div class="login-box">
             <h1>Admin Login</h1>
-            <p>Please enter your credentials to continue</p>
-        </div>
         <form id="adminLoginForm" class="admin-login-form">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -193,7 +154,10 @@
             <div id="loading" class="loading">
                 <div class="loading-spinner"></div>
             </div>
-            <button type="submit" class="login-btn" id="loginButton">Login</button>
+            <button type="submit" class=" btn" id="loginButton">
+                <i class="fas fa-sign-in-alt"></i>
+                        Log In
+            </button>
         </form>
     </div>
 

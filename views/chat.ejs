@@ -1,274 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %> - OnGrounds</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
-    <script src="/socket.io/socket.io.js"></script>
-    <style>
-      .chat-container {
-        height: calc(100vh - 2rem);
-      }
-      .message-container {
-        height: calc(100% - 8rem);
-      }
-      .chat-input {
-        height: 4rem;
-      }
-      .typing-indicator {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %> - OnGrounds</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029&auto=format&fit=crop') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Inter', sans-serif;
+    }
 
-      .dot-typing {
-        position: relative;
-        width: 10px;
-        height: 10px;
-        border-radius: 5px;
-        background-color: #9880ff;
-        color: #9880ff;
-        animation: dotTyping 1.8s infinite linear;
-      }
+    .dot-typing {
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      background: #6366f1;
+      animation: dotTyping 1.5s infinite linear;
+      margin-right: 4px;
+    }
+    .dot-typing::before,
+    .dot-typing::after {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      background: #6366f1;
+      position: absolute;
+    }
+    .dot-typing::before {
+      left: -15px;
+      animation: dotTyping 1.5s infinite linear 0.2s;
+    }
+    .dot-typing::after {
+      left: 15px;
+      animation: dotTyping 1.5s infinite linear 0.4s;
+    }
+    @keyframes dotTyping {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.6); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-800 bg-opacity-40 backdrop-blur-md flex items-center justify-center">
+  <div class="w-full max-w-4xl h-[90vh] bg-white rounded-xl shadow-xl flex flex-col overflow-hidden">
 
-      .dot-typing::before,
-      .dot-typing::after {
-        content: "";
-        display: inline-block;
-        position: absolute;
-        top: 0;
-      }
-
-      .dot-typing::before {
-        left: -15px;
-        width: 10px;
-        height: 10px;
-        border-radius: 5px;
-        background-color: #9880ff;
-        color: #9880ff;
-        animation: dotTyping 1.8s infinite linear;
-        animation-delay: 0.2s;
-      }
-
-      .dot-typing::after {
-        left: 15px;
-        width: 10px;
-        height: 10px;
-        border-radius: 5px;
-        background-color: #9880ff;
-        color: #9880ff;
-        animation: dotTyping 1.8s infinite linear;
-        animation-delay: 0.4s;
-      }
-
-      @keyframes dotTyping {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-        50% {
-          transform: scale(0.8);
-          opacity: 0.5;
-        }
-        100% {
-          transform: scale(1);
-          opacity: 1;
-        }
-      }
-      #toast-container {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 50;
-      }
-
-      .toast {
-        margin-bottom: 0.5rem;
-        padding: 0.75rem;
-        border-radius: 0.375rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 0.3s ease-in-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .message {
-        animation: fadeIn 0.3s ease-out;
-      }
-      .toast {
-        animation: slideIn 0.3s ease-out;
-      }
-
-      .fade-out {
-        opacity: 0;
-        transition: opacity 0.3s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes slideIn {
-        from {
-          transform: translateX(100%);
-        }
-        to {
-          transform: translateX(0);
-        }
-      }
-      .typing-indicator {
-        opacity: 1;
-        transition: opacity 0.3s ease;
-      }
-
-      .typing-indicator.hidden {
-        opacity: 0;
-      }
-    </style>
-  </head>
-  <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-4">
-      <div class="bg-white rounded-lg shadow-md chat-container">
-        <div class="bg-white shadow-sm p-4 flex items-center justify-between">
-          <div class="flex items-center">
-            <a href="/dashboard" class="text-gray-600 hover:text-gray-800 mr-4">
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </a>
-            <div class="flex items-center">
-              <% if (otherUser.profileImage) { %>
-              <img
-                src="<%= otherUser.profileImage %>"
-                alt="<%= otherUser.name %>"
-                class="w-10 h-10 rounded-full mr-3"
-              />
-              <% } else { %>
-              <div
-                class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center mr-3"
-              >
-                <span class="text-lg font-medium text-gray-700"
-                  ><%= otherUser.name.charAt(0) %></span
-                >
-              </div>
-              <% } %>
-              <div>
-                <h1 class="text-2xl font-bold text-gray-800">
-                  <%= otherUser.name %>
-                </h1>
-                <p class="text-xs text-gray-500">
-                  <%= otherUser.email || '' %>
-                </p>
-              </div>
-            </div>
+    <!-- Chat Header -->
+    <div class="p-4 border-b flex items-center justify-between bg-gray-100">
+      <div class="flex items-center space-x-3">
+        <a href="/dashboard" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </a>
+        <% if (otherUser.profileImage) { %>
+          <img src="<%= otherUser.profileImage %>" alt="<%= otherUser.name %>" class="w-10 h-10 rounded-full"/>
+        <% } else { %>
+          <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+            <span class="font-semibold text-gray-700"><%= otherUser.name.charAt(0) %></span>
           </div>
-          <div id="chat-online-status" class="text-sm text-gray-500">
-            Offline
-          </div>
+        <% } %>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-800"><%= otherUser.name %></h2>
+          <p class="text-xs text-gray-500"><%= otherUser.email || '' %></p>
         </div>
+      </div>
+      <span id="chat-online-status" class="text-sm text-gray-500">Offline</span>
+    </div>
 
-        <div
-          id="messageContainer"
-          class="flex-1 overflow-y-auto p-4 message-container space-y-4"
-        >
-          <% if (messages && messages.length > 0) { %> <%
-          messages.forEach(function(message) { %>
-          <div
-            id="message-<%= message._id %>"
-            class="flex <%= message.sender._id.toString() === currentUser._id.toString() ? 'justify-end' : 'justify-start' %>"
-            data-read="<%= message.read ? 'true' : 'false' %>"
-          >
-            <div
-              class="<%= message.sender._id.toString() === currentUser._id.toString() ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs md:max-w-md"
-            >
+    <!-- Messages Area -->
+    <div id="messageContainer" class="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
+      <% if (messages && messages.length > 0) { %>
+        <% messages.forEach(function(message) { %>
+          <div class="flex <%= message.sender._id.toString() === currentUser._id.toString() ? 'justify-end' : 'justify-start' %>">
+            <div class="<%= message.sender._id.toString() === currentUser._id.toString() ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs md:max-w-md">
               <p><%= message.content || message.message %></p>
-              <div
-                class="flex items-center justify-between text-xs mt-1 <%= message.sender._id.toString() === currentUser._id.toString() ? 'text-blue-100' : 'text-gray-500' %>"
-              >
-                <span
-                  ><%= new Date(message.createdAt ||
-                  message.timestamp).toLocaleTimeString() %></span
-                >
-                <% if (message.isEdited) { %>
-                <span>(edited)</span>
-                <% } %> <% if (message.sender._id.toString() ===
-                currentUser._id.toString()) { %>
-                <span class="read-status"
-                  ><%= message.read ? '✓✓' : '✓' %></span
-                >
+              <div class="flex justify-between mt-1 text-xs <%= message.sender._id.toString() === currentUser._id.toString() ? 'text-blue-100' : 'text-gray-600' %>">
+                <span><%= new Date(message.createdAt || message.timestamp).toLocaleTimeString() %></span>
+                <% if (message.isEdited) { %><span>(edited)</span><% } %>
+                <% if (message.sender._id.toString() === currentUser._id.toString()) { %>
+                  <span class="read-status"><%= message.read ? '✓✓' : '✓' %></span>
                 <% } %>
               </div>
             </div>
           </div>
-          <% }); %> <% } else { %>
-          <div class="flex items-center justify-center h-full">
-            <p class="text-gray-500">No messages yet. Start a conversation!</p>
-          </div>
-          <% } %>
+        <% }) %>
+      <% } else { %>
+        <div class="flex items-center justify-center h-full text-gray-500">
+          No messages yet. Start a conversation!
         </div>
-
-        <div
-          id="typing-indicator"
-          class="typing-indicator px-4 text-gray-500 text-sm hidden"
-        >
-          <div class="dot-typing"></div>
-        </div>
-
-        <div class="p-4 border-t chat-input">
-          <form id="messageForm" class="flex gap-2">
-            <input
-              type="hidden"
-              id="conversationId"
-              value="<%= conversation ? conversation._id : '' %>"
-            />
-            <input type="hidden" id="receiverId" value="<%= otherUser._id %>" />
-            <input
-              type="text"
-              id="messageInput"
-              class="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              placeholder="Type your message here..."
-            />
-            <button
-              type="submit"
-              class="bg-blue-500 text-white px-6 py-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            >
-              Send
-            </button>
-          </form>
-        </div>
-      </div>
+      <% } %>
     </div>
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50"></div>
+    <!-- Typing Indicator -->
+    <div id="typing-indicator" class="px-4 py-1 hidden text-sm text-gray-500 flex items-center">
+      <div class="relative flex">
+        <div class="dot-typing"></div>
+      </div>
+      <span class="ml-2">Typing...</span>
+    </div>
+
+    <!-- Chat Input -->
+    <form id="messageForm" class="flex p-4 gap-2 border-t bg-gray-50">
+      <input type="hidden" id="conversationId" value="<%= conversation ? conversation._id : '' %>" />
+      <input type="hidden" id="receiverId" value="<%= otherUser._id %>" />
+      <input
+        type="text"
+        id="messageInput"
+        class="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Type your message here..."
+      />
+      <button
+        type="submit"
+        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+      >
+        Send
+      </button>
+    </form>
+  </div>
+
+  <div id="toast-container" class="fixed top-5 right-5 z-50"></div>
+
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
