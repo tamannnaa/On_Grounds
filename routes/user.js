@@ -4,7 +4,7 @@ const {getMentorAvailability,updateMentorAvailability,getTutorProfile,bookSlot,s
     getHomePage,getDashboard,getBecomeMentorPage
 } = require('../controllers/userController');
 const {logRequests,errorHandler}= require('../middleware/userMiddleware');
-const {getSignupPage,signup,getLoginPage,login,getVerifyPage,verifyOTP,logout,getSessionStatus,registerMentor} = require('../controllers/userController');
+const {getSignupPage,signup,getLoginPage,login,getVerifyPage,verifyOTP,getHelpPage,getLearnMorePage,logout,getSessionStatus,registerMentor} = require('../controllers/userController');
 const { isAuthenticated } = require('../middleware/auth');
 
 router.get('/signup', getSignupPage);
@@ -17,6 +17,8 @@ router.get('/logout', logout);
 router.get('/api/session-status',getSessionStatus);
 // Basic user routes
 router.get('/', getHomePage);
+router.get('/help', getHelpPage);
+router.get('/learn-more', getLearnMorePage);
 router.get('/dashboard', isAuthenticated,getDashboard);
 router.get('/become-mentor', isAuthenticated,getBecomeMentorPage);
 router.post('/search-tutors', searchTutors);

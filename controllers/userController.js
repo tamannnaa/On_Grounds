@@ -427,7 +427,12 @@ const getSignupPage = (req, res) => {
 const getLoginPage = (req, res) => {
     res.render('loginsignup', { layout: false });
 };
-
+const getHelpPage = (req, res) => {
+    res.render('help', { layout: false });
+};
+const getLearnMorePage = (req, res) => {
+    res.render('learn-more', { layout: false });
+};
 const getVerifyPage = (req, res) => {
     res.render('verify', { layout: false });
 };
@@ -780,6 +785,8 @@ module.exports = {
     logout,
     getSessionStatus,
     getHomePage,
+    getHelpPage,
+    getLearnMorePage,
     getDashboard,
     getBecomeMentorPage,
     registerMentor
